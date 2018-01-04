@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+{% block content %}
+<div class="form-group">
+    <div class="col-md-4">
+        <select class="form-control" id='filter_client'>
+            <option value="-1">Choose a Client</option>
+            {% for cl in clients %}
+            <option {% ifequal cl.id|slugify request.GET.client %} selected=selected {% endifequal %}value="{{ cl.id }}">{{ cl.name }}</option>
+            {% endfor %}
+        </select>
+    </div> <div class="col-md-8"> </div>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                Nickname
+                {% if 'nickname' in sorting and '-nickname' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-nickname' %}"></a>
+                {% elif '-nickname' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'nickname' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'nickname' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Description
+                {% if 'description' in sorting and '-description' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-description' %}"></a>
+                {% elif '-description' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'description' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'description' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Client
+                {% if 'client' in sorting and '-client' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-client' %}"></a>
+                {% elif '-client' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'client' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'client' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for target in objects %}
+        <tr>
+            <td> {{ target.id }} </td>
+            <td> <a title="Edit" href="/targets-list/edit/{{ target.id }}">{{ target.nickname }}</a></td>
+            <td data-target-description="{{ target.id }}"> {{ target.description }} </td>
+            <td> <a href="/clients/edit/{{ target.client.id }}">{{ target.client }}</a> </td>
+            <td style="width: 75px; text-align: center;">
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/targets-list/edit/{{ target.id }}"></a>
+                <a class="glyphicon glyphicon-plus" title="Extend" href="/targets-list/edit/extend/{{ target.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('targets-list', {{ target.id }})"></a>
+            </td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td colspan="5"> <a title="Add Target List" href="/targets-list/add/">Add Target List</a> </td>
+        </tr>
+    </tbody>
+</table>
+    
+{% with order_by="order_by="|add:sorting %}
+    {% with client="&client="|add:client %}
+    {% bootstrap_pagination page extra=order_by|add:client %}
+    {% endwith %}
+{% endwith %}
+{% endblock content %}

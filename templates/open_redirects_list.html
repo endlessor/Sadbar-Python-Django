@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+{% block content %}
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                URL
+                {% if 'url' in sorting and '-url' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-url' %}"></a>
+                {% elif '-url' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'url' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'url' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for open_redirect in objects %}
+        <tr>
+            <td> {{ open_redirect.id }} </td>
+            <td> <a title="Edit" href="/open-redirects/edit/{{ open_redirect.id }}">{{ open_redirect.url }}</a></td>
+            <td style="width: 50px; text-align: center;">
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/open-redirects/edit/{{ open_redirect.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('open-redirects', {{ open_redirect.id }})"></a>
+            </td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td colspan="3"> <a title="Add Open Redirect" href="/open-redirects/add/">Add Open Redirect</a> </td>
+        </tr>
+    </tbody>
+</table>
+
+{% with order_by="order_by="|add:sorting %}
+{% bootstrap_pagination page extra=order_by %}
+{% endwith %}
+{% endblock content %}

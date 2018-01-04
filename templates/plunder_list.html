@@ -1,0 +1,102 @@
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% load ordering %}
+
+    <table class="table plunder-table">
+        <tr>
+            <th style='width: 50px'>
+                ID
+                {% if 'id' in sorting and '-id' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-id' %}"></a>
+                {% elif '-id' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'id' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'id' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                OAuth Result
+                {% if 'oauth_result' in sorting and '-oauth_result' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-oauth_result' %}"></a>
+                {% elif '-oauth_result' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'oauth_result' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'oauth_result' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Filename
+                {% if 'filename' in sorting and '-filename' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-filename' %}"></a>
+                {% elif '-filename' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'filename' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'filename' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                MIME Type
+                {% if 'mimetype' in sorting and '-mimetype' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-mimetype' %}"></a>
+                {% elif '-mimetype' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'mimetype' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'mimetype' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Last Modified
+                {% if 'last_modified' in sorting and '-last_modified' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-last_modified' %}"></a>
+                {% elif '-last_modified' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'last_modified' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'last_modified' %}"></a>
+                {% endif %}
+            </th>
+        </tr>
+        {% for each_plunder in plunder %}
+        <tr>
+            <td>{{ each_plunder.id }}</td>
+            <td><a href="/oauth-results/edit/{{ each_plunder.oauth_result.id }}/">{{ each_plunder.oauth_result.email }}</a></td>
+            <td><a href="/plunder/edit/{{ each_plunder.id }}">{{ each_plunder.filename }}</a></td>
+            <td>{{ each_plunder.mimetype }}</td>
+            <td>{{ each_plunder.last_modified }}</td>
+            <td style="width: 70px; text-align: center;">
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/plunder/edit/{{ each_plunder.id }}"></a>
+                <a class="glyphicon glyphicon-cloud-download" title="Download {{ each_plunder.filename }}" href="/plunder/serve/{{ each_plunder.id }}">
+                </a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntityWithoutRedirect('plunder', {{ each_plunder.id }})"></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if page %}
+    <table class="container-flex plunder-paginator">
+        <tr>
+            <td>
+            {% with order_by="order_by="|add:sorting %}
+                {% with pg_size="&pg_size="|add:pg_size %}
+                    {% bootstrap_pagination page extra=order_by|add:pg_size %}
+                {% endwith %}
+            {% endwith %}
+            </td>
+            <td>
+                <select class="form-control" name="pg_size" id="pg_size">
+                    <option value="-1">Select page size</option>
+                    <option value="25" {% if "25" == request.GET.pg_size %}selected="selected"{% endif %}>Show 25</option>
+                    <option value="50" {% if "50" == request.GET.pg_size %}selected="selected"{% endif %}>Show 50</option>
+                    <option value="100" {% if "100" == request.GET.pg_size %}selected="selected"{% endif %}>Show 100</option>
+                    <option value="500" {% if "500" == request.GET.pg_size %}selected="selected"{% endif %}>Show 500</option>
+                    <option value="2000" {% if "2000" == request.GET.pg_size %}selected="selected"{% endif %}>Show 2000</option>
+                    <option value="999999" {% if "999999" == request.GET.pg_size %}selected="selected"{% endif %}>Show 999999</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    {% else %}
+    <div>
+        <p>No plunder found.</p>
+    </div>
+    {% endif %}

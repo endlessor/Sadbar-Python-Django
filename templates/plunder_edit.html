@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if plunder %}
+    <legend>Saved Plunder</legend>
+    <form id='campaign_edit' class='plunder-edit form-horizontal' action="/plunder/edit/{{ plunder.id }}/" method='POST'>
+{% else %}
+    <legend>New Plunder</legend>
+    <form id='campaign_edit' class='plunder-edit form-horizontal' action="/plunder/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+        {% bootstrap_form form layout='horizontal' %}
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <a href="/plunder/list" class="btn btn-default" id="back-to-list">Back To List</a>
+                    {% if plunder %}
+                        {% if plunder.oauth_result %}
+                        <a href="/oauth-apis/google/all/api-console/{{ plunder.oauth_result.id }}/" class="btn btn-default" title="Open the Google API console for {{ plunder.oauth_result.email }}">API Console</a>
+                        {% endif %}
+                    <a href="/plunder/serve/{{ plunder.id }}" class="btn btn-default btn-dark-green" id="back-to-list" title="Download {{ each_plunder.filename }}">Download File from Sandbar</a>
+                    {% endif %}
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </form>
+{% endblock %}

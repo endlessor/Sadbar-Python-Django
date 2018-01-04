@@ -1,0 +1,31 @@
+---
+- name: Django | Packages | Install required system packages.
+  apt: >
+    pkg={{item}}
+    state=present
+    update-cache=yes
+  with_items:
+    - build-essential
+    - git
+    - python-dev
+    - python-setuptools
+    - python-psycopg2
+    - python-pip
+    - postfix
+    - libpq-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - libssl-dev
+    - dos2unix
+
+- name: Django | install python-virtualenv with specific version
+  apt: name="python-virtualenv={{ version.virtualenv }}*"  update_cache=yes  state=present force=yes
+  
+- name: Django | (pip) Install required system packages.
+  pip:
+    name={{item}}
+    state=present
+  with_items:
+    - pexpect
+
+

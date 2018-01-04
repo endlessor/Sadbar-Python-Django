@@ -1,0 +1,9 @@
+---
+- name: Backup | Check the presence of the backup folder
+  file: path={{ project.root }}/backup state=directory
+
+- name: Backup | Install Backup script
+  template: src=backup.sh dest={{ project.root }}/backup mode=0755
+
+- name: Backup | Backup data
+  shell: "{{ project.root }}/backup/backup.sh"

@@ -1,0 +1,9 @@
+[run]
+source = .
+omit =
+    ../*migrations*
+
+[report]
+exclude_lines =
+    def __repr__
+    def __unicode__

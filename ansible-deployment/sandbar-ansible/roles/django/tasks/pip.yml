@@ -1,0 +1,83 @@
+---
+- name: Get the Public IP
+  local_action:
+      module: uri
+      url: http://checkip.amazonaws.com/
+      return_content: yes
+  register: public_ip_lookup
+
+- set_fact:
+      public_ip: "{{ public_ip_lookup.content | regex_replace('\n','') }}"
+      
+- debug: var=public_ip
+
+- name: Django | Ensure {{project.root}} exists
+  file: path={{project.root}} state=directory
+
+- name: Django | Unarchive sandbar application
+  unarchive:
+    src=files/sandbar-source.zip
+    dest={{project.root}}
+    copy=yes
+
+- name: Django | apply permissions on {{project.root}}
+  file:
+    path={{project.root}}
+    owner={{project.user}}
+    group={{project.group}}
+    recurse=yes
+    mode=0774
+
+- stat: path=/etc/init.d/celerybeat
+  register: celery
+
+- stat: path=/etc/init.d/celeryd
+  register: celery
+
+- name: Django | Stop services to ensure python2 is not already running
+  service: name="{{item}}" state=stopped
+  register: service_stopped
+  when: celery.stat.exists
+  ignore_errors: yes
+  with_items:
+    - celerybeat
+    - celeryd
+
+- name: Django | Create virtualenv venv
+  shell: virtualenv venv chdir="{{ project.root }}"
+  # shell: mkvirtualenv venv chdir="{{ project.root }}"
+
+- name: Django | Copy settings.py to "{{ project.root }}/sandbar"
+  template:
+    src: templates/settings.py
+    dest: "{{ project.root }}/sandbar/settings.py"
+
+- name: Django | Install sandbar base requirements
+  shell: . {{ project.virtualenv }}bin/activate && pip install -r ./requirements/base.txt chdir="{{ project.root }}"
+
+- name: Django | Ensure "{{ project.root }}/manage.py" is Unicode
+  shell: dos2unix "{{ project.root }}/manage.py"
+
+- name: Django | Activate virtualenv venv and makemigrations
+  shell: . {{ project.virtualenv }}bin/activate && {{ project.root }}/manage.py makemigrations chdir="{{ project.root }}"
+
+- name: Django | Activate virtualenv venv and configure auth
+  shell: . {{ project.virtualenv }}bin/activate && ./manage.py migrate auth chdir="{{ project.root }}"
+
+- name: Django | Activate virtualenv venv and configure djcelery
+  shell: . {{ project.virtualenv }}bin/activate && ./manage.py migrate djcelery chdir="{{ project.root }}"
+
+- name: Django | Activate virtualenv venv and migrate
+  shell: . {{ project.virtualenv }}bin/activate && ./manage.py migrate chdir="{{ project.root }}"
+
+- name: Django | Activate virtualenv venv and create super user
+  expect:
+    command: /bin/bash -c "source {{ project.virtualenv }}bin/activate && {{ project.virtualenv }}bin/python2 {{ project.root }}/manage.py createsuperuser
+    responses:
+      (?i)Username.: "{{ project.user }}"
+      (?i)Email.: "{{ admin_email }}"
+      (?i)Password.: "{{ project.userPassword }}"
+      (?i)again.: "{{ project.userPassword }}"
+    creates: "{{ project.virtualenv }}super_user_created"
+
+- file: path={{project.virtualenv}}super_user_created state=touch

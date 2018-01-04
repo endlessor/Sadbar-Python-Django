@@ -1,0 +1,215 @@
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% load ordering %}
+
+    <legend>Scheduled Emails</legend>
+    <table class="table vector-email-table">
+        <tr>
+            <td colspan="2">
+                <select class="form-control" name="filter_status" id="filter_status">
+                    <option value="-1">Filter by state</option>
+                    <option value="0" {% if "0" == request.GET.filter_status %}selected="selected"{% endif %}>Waiting</option>
+                {% for fs in filter_status %}
+                    <option value="{{ fs.0 }}" {% if fs.0|stringformat:"d" == request.GET.filter_status %}selected="selected"{% endif %}>{{ fs.1 }}</option>
+                {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th style='width: 50px'>
+                ID
+                {% if 'id' in sorting and '-id' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-id' %}"></a>
+                {% elif '-id' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'id' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'id' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                State
+                {% if 'state' in sorting and '-state' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-state' %}"></a>
+                {% elif '-state' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'state' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'state' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                OAuth
+            </th>
+            {% if apage == 'email_log' %}
+            <th>
+                Client
+                {% if 'client' in sorting and '-client' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-client' %}"></a>
+                {% elif '-client' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'client' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'client' %}"></a>
+                {% endif %}
+            </th>
+            {% endif %}
+            {% if apage == 'clients' or apage == 'email_log' %}
+            <th>
+                Campaign
+                {% if 'campaign' in sorting and '-campaign' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-campaign' %}"></a>
+                {% elif '-campaign' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'campaign' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'campaign' %}"></a>
+                {% endif %}
+            </th>
+            {% endif %}
+            {% if apage == 'campaigns' or apage == 'clients' or apage == 'email_log' %}
+            <th>
+                Engagement
+                {% if 'engagement' in sorting and '-engagement' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-engagement' %}"></a>
+                {% elif '-engagement' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'engagement' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'engagement' %}"></a>
+                {% endif %}
+            </th>
+            {% endif %}
+            <th>
+                Target
+                {% if 'target' in sorting and '-target' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-target' %}"></a>
+                {% elif '-target' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'target' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'target' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Target List
+                {% if 'targetlist' in sorting and '-targetlist' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-targetlist' %}"></a>
+                {% elif '-targetlist' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'targetlist' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'targetlist' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Scheduled Sending
+                {% if 'send_at' in sorting and '-send_at' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-send_at' %}"></a>
+                {% elif '-send_at' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'send_at' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'send_at' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Target Timezone
+                {% if 'timezone' in sorting and '-timezone' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-timezone' %}"></a>
+                {% elif '-timezone' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'timezone' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'timezone' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Edit
+            </th>
+        </tr>
+        {% for vector_email in vector_emails %}
+        <tr>
+            <td>{{ vector_email.id }}</td>
+            <td>
+                <form id='vector_emails_list_state_{{ vector_email.id }}' class='vector-emails-list-state form-horizontal' action="#" method='POST'>
+                    {% csrf_token %}
+                    <button data-vector-email="{{ vector_email.id }}" id='start_stop_vector_email_send' type="button" title="Toggle delivery" class="btn btn-xs vector-email-control glyphicon glyphicon-{% if vector_email.state == 0 %}tent btn-grey-no-bg{% elif vector_email.state == 1 %}refresh btn-light-green{% elif vector_email.state == 2 %}ban-circle btn-black-no-bg{% elif vector_email.state == 3 %}remove btn-red{% elif vector_email.state == 4 %}ok btn-dark-green{% elif vector_email.state == 5 %}remove-circle btn-dark-blue-no-bg{% endif %}">
+                    </button>
+                        {% if vector_email.state == 3 %}
+                            <span data-vector-email="{{ vector_email.id }}" class="vector-emails-list-state-text vector-email-error-tag" title="{{ vector_email.engagement__status.2.1 }}">Error {{ vector_email.engagement__status.2.0 }}</span>
+                        {% else %}
+                            <span data-vector-email="{{ vector_email.id }}" class="vector-emails-list-state-text">
+                                {% if vector_email.state == 0 %}
+                                    Waiting
+                                {% elif vector_email.state == 1 %}
+                                    Pending
+                                {% elif vector_email.state == 2 %}
+                                    Paused
+                                {% elif vector_email.state == 4 %}
+                                    Sent
+                                {% elif vector_email.state == 5 %}
+                                    Missed
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                </form>
+            <td>
+            {% if vector_email.is_oauth %}
+                {% if vector_email.oauth_granted %}
+                    <a class="glyphicon glyphicon-console" title="Open OAuth Console" href="/oauth-apis/google/all/api-console/{{ vector_email.targeted_oauth_result_id }}" target="_blank"></a>
+                {% endif %}
+            {% else %}
+                <a>{{ vector_email.engagement.is_oauth }}</a>
+            {% endif %}
+            </td>
+            {% if apage == 'email_log' %}
+                <td>
+                    <a href="/clients/edit/{{ vector_email.engagement__campaign__client__id }}/">{{ vector_email.engagement__campaign__client__name }}</a>
+                </td>
+            {% endif %}
+            {% if apage == 'clients' or apage == 'email_log' %}
+                <td>
+                    <a href="/campaigns/edit/{{ vector_email.engagement__campaign__id }}/">{{ vector_email.engagement__campaign__name }}</a>
+                </td>
+            {% endif %}
+            {% if apage == 'campaigns' or apage == 'clients' or apage == 'email_log' %}
+                <td>
+                    <a href="/{% if vector_email.is_oauth %}oauth-{% endif %}engagements/edit/{{ vector_email.engagement__id }}/">{{ vector_email.engagement__name }}</a>
+                </td>
+            {% endif %}
+            </td>
+            <td>{{ vector_email.target__email }}</td>
+            <!-- When Targets actually have more than one TargetList, this will break: -->
+            <td><a href="/targets-list/edit/{{ vector_email.target__targetlist_set__get__id }}/">{{ vector_email.target__targetlist_set__get__nickname }}</a></td>
+            <td>{{ vector_email.send_at }}</td>
+            <td>{{ vector_email.target__timezone }}</td>
+            <td style="width: 70px; text-align: center;">
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/vector-emails/edit/{{ vector_email.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntityWithoutRedirect('vector-emails', {{ vector_email.id }})"></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if page %}
+    <table class="container-flex vector-email-paginator">
+        <tr>
+            <td>
+            {% with order_by="order_by="|add:sorting %}
+                {% with filter_status="&filter_status="|add:fs %}
+                    {% with pg_size="&pg_size="|add:pg_size %}
+                        {% bootstrap_pagination page extra=order_by|add:filter_status|add:pg_size %}
+                    {% endwith %}
+                {% endwith %}
+            {% endwith %}
+            </td>
+            <td>
+                <select class="form-control" name="pg_size" id="pg_size">
+                    <option value="-1">Select page size</option>
+                    <option value="25" {% if "25" == request.GET.pg_size %}selected="selected"{% endif %}>Show 25</option>
+                    <option value="50" {% if "50" == request.GET.pg_size %}selected="selected"{% endif %}>Show 50</option>
+                    <option value="100" {% if "100" == request.GET.pg_size %}selected="selected"{% endif %}>Show 100</option>
+                    <option value="500" {% if "500" == request.GET.pg_size %}selected="selected"{% endif %}>Show 500</option>
+                    <option value="2000" {% if "2000" == request.GET.pg_size %}selected="selected"{% endif %}>Show 2000</option>
+                    <option value="999999" {% if "999999" == request.GET.pg_size %}selected="selected"{% endif %}>Show 999999</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    {% else %}
+    <div>
+        <p>No scheduled emails were retrieved.</p>
+    </div>
+    {% endif %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if siteSettings %}
+    <form id='campaign_edit' class='site_settings_edit form-horizontal' action="/site-settings/edit/{{ siteSettings.id }}/" method='POST'>
+{% elif request.POST.id %}
+    <form id='campaign_edit' class='site_settings_edit form-horizontal' action="/site-settings/edit/{{ request.POST.id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='site_settings_edit form-horizontal' action="/site-settings/edit/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    <fieldset id="site_settings" class="">
+        <legend>Site Settings</legend>
+        <div class="form-group">
+            <div class="col-md-3">
+                <div class="control-label">
+                    <label for="{{ form.public_ip.id_for_label }}">
+                        {{ form.public_ip.label }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input class="form-control"
+                           id="id_public_ip"
+                           name="public_ip"
+                           title=""
+                           type="text"
+                           placeholder="127.0.0.1"
+                           value="{% if form.initial.public_ip %}{{ form.initial.public_ip }}{% endif %}">
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" title="Save Site Settings changes" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </fieldset>
+    </form>
+{% endblock %}

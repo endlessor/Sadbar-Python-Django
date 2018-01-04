@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if scraper_user_agent %}
+    <legend>Edit Scraper User Agent: {{ scraper_user_agent.name }}</legend>
+    <form id='campaign_edit' class='scraper_user_agent_edit form-horizontal' action="/scraper-user-agents/edit/{{ scraper_user_agent.id }}/" method='POST'>
+{% else %}
+    <legend>New Scraper User Agent</legend>
+    <form id='campaign_edit' class='scraper_user_agent_edit form-horizontal' action="/scraper-user-agents/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+        {% bootstrap_form form layout='horizontal' %}
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <a href="/scraper-user-agents/list" class="btn btn-default" id="back-to-list">Back To List</a>
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </form>
+{% endblock %}

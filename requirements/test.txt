@@ -1,0 +1,7 @@
+#coverage==4.0.3  # more work to do before coverage is accurate for Sandbar
+#django-coverage==1.2.4
+nose==1.3.7
+django-nose==1.4.3
+WebTest==2.0.21
+django-webtest==1.7.9
+django-sslserver==0.19

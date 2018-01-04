@@ -1,0 +1,71 @@
+{% block content %}
+
+        <input id="next_page_token" type="hidden" value="">
+
+        <div class="col-md-2">
+            <a id="gmail_messages_next_page_btn" class="btn btn-default btn-light-green" title="Get the next page of emails for {{ oa_result.email }}">First Page</a>
+        </div>
+
+        <div class="col-md-1"></div>
+
+        <div class="col-md-2">
+            <p style="font-weight: bold; width: 150%;"><a href="https://support.google.com/mail/answer/7190?hl=en">Search query:</a></p>
+        </div>
+        <div class="col-md-3">
+            <input id="api_console_search_query" style="width: 180%; text-align: center;" value="">
+        </div>
+
+        <div class="col-md-2"></div>
+
+        <div class="col-md-1">
+            <a id="api_console_clear_btn" class="btn btn-default btn-red" title="Clear the API console, but do not return to the first list page">Clear</a>
+        </div>
+
+        <div class="col-md-1">
+            <a id="api_console_reset_btn" class="btn btn-default btn-red" title="Clear the API console and return to the first list page">Reset</a>
+        </div>
+
+        <br><br>
+
+        <legend></legend>
+
+        <div class="form-group">
+            <div class="col-md-3">
+                <a id="gmail_messages_list_btn" class="list-detail-toggle btn btn-default" title="List email IDs for the indicated number of messages for {{ oa_result.email }}">Get list of emails</a>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-3">
+                <a id="gmail_messages_get_page_btn" class="btn btn-default btn-light-blue" title="Get the page at the indicated token containing, at most, the indicated number of emails">Get page by token</a>
+            </div>
+            <div class="col-md-2">
+                <input id="gmail_messages_page_token" style="width: 165%; text-align: center;">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-3">
+                <a id="gmail_messages_verbose_list_btn" class="list-detail-toggle btn btn-default" title="List all messages for {{ oa_result.email }}, including some data about each message">Get detailed list</a>
+            </div>
+
+            <div class="col-md-2">
+                <input id="gmail_messages_list_max_results" style="width: 120%; text-align: center;" value="10">
+            </div>
+            <div class="col-md-1">
+                <p style="font-weight: bold;">email(s)</p>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-3">
+                <a id="gmail_messages_get_btn" class="btn btn-default btn-light-blue" title="Request message with a specific ID">Get email body by ID</a>
+            </div>
+            <div class="col-md-2">
+                <input id="gmail_messages_get_id" style="text-align: center;">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-3">
+                <a id="gmail_messages_get_everything_btn" class="list-detail-toggle btn btn-default" title="Get the full text of messages for {{ oa_result.email }}">Get Everything</a>
+            </div>
+        </div>
+
+{% endblock %}

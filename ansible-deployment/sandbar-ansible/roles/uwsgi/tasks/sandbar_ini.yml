@@ -1,0 +1,10 @@
+---
+- name: uWsgi | (Ensure {{project.root}} exists
+  file: path=/etc/uwsgi/vassals state=directory
+  
+- name: uWsgi | Applying Sandbar ini
+  template: >
+    src=sandbar_uwsgi.ini
+    dest=/etc/uwsgi/vassals/{{project.name}}_uwsgi.ini
+    backup=yes
+    mode=644

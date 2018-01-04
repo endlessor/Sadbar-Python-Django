@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if phishingDomain %}
+    <form id='campaign_edit' class='phishing_domain_edit form-horizontal' action="/phishing-domains/edit/{{ phishingDomain.id }}/" method='POST'>
+{% elif request.POST.id %}
+    <form id='campaign_edit' class='phishing_domain_edit form-horizontal' action="/phishing-domains/edit/{{ request.POST.id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='phishing_domain_edit form-horizontal' action="/phishing-domains/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    <fieldset id="phishing_domain" class="">
+        <legend>Phishing Domain</legend>
+        {% bootstrap_field form.pd_id layout='horizontal' %}
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block" id="check_domain_status"> </div>
+            </div>
+        </div>
+        {% bootstrap_field form.protocol layout='horizontal' %}
+        <div class="form-group">
+            <div class="col-md-3">
+                <div class="control-label">
+                    <label for="{{ form.domain_name.id_for_label }}">
+                        {{ form.domain_name.label }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input class="form-control"
+                           id="id_domain_name"
+                           name="domain_name"
+                           title=""
+                           type="text"
+                           placeholder="sandbar.rhinosecuritylabs.com"
+                           value="{% if form.initial.domain_name %}{{ form.initial.domain_name }}{% endif %}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="submit_block">
+                    <a href="javascript:void(0)" class="btn btn-success" id="check_domain" >Check Domain</a>
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <a href="/phishing-domains/list" class="btn btn-default" id="back-to-list" title="Return to the Phishing Domains list">Back To List</a>
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" title="Save Phishing Domain changes" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </fieldset>
+    </form>
+{% endblock %}

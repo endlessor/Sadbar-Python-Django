@@ -1,0 +1,16 @@
+[Unit]
+Description=uWSGI Emperor
+After=network.target
+
+[Service]
+User={{project.user}}
+Group={{project.group}}
+ExecStart={{project.virtualenv}}bin/uwsgi --emperor /etc/uwsgi/vassals
+RuntimeDirectory=uwsgi
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+
+{% block content %}
+<table border="0" id="email_templates_table" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                Name
+                {% if 'name' in sorting and '-name' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-name' %}"></a>
+                {% elif '-name' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'name' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'name' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Description
+                {% if 'description' in sorting and '-description' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-description' %}"></a>
+                {% elif '-description' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'description' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'description' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                From Header
+                {% if 'from_header' in sorting and '-from_header' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-from_header' %}"></a>
+                {% elif '-from_header' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'from_header' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'from_header' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Subject Header
+                {% if 'subject_header' in sorting and '-subject_header' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-subject_header' %}"></a>
+                {% elif '-subject_header' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'subject_header' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'subject_header' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for template in objects %}
+        <tr>
+            <td> {{ template.id }} </td>
+            <td> <a title="Edit" href="/email-templates/edit/{{ template.id }}/">{{ template.name }}</a></td>
+            <td> {{ template.description }} </td>
+            <td> {{ template.from_header }} </td>
+            <td> {{ template.subject_header }} </td>
+            <td style="width: 70px; text-align: center;">
+                <a class="glyphicon glyphicon-envelope" title="Preview" data-id="{{ template.id }}" href="javascript:void(0)"></a>
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/email-templates/edit/{{ template.id }}/"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('email-templates', {{ template.id }})"></a>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="6"> <a title="Add Email Template" href="/email-templates/add/">Add Email Template</a> </td>
+        </tr>
+    </tbody>
+</table>
+{% with order_by="order_by="|add:sorting %}
+{% bootstrap_pagination page extra=order_by %}
+{% endwith %}
+{% endblock content %}

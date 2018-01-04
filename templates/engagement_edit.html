@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block extjs %}
+<script src="{% static 'js/lodash.min.js' %}" type="text/javascript" charset="utf-8"></script>
+{% endblock extjs %}
+
+{% block content %}
+
+{% if engagement %}
+    {% include "preview_engagement_modal.html" %}
+    {% include "preview_oauth_engagement_modal.html" %}
+    <form id='campaign_edit' class='engagement_edit form-horizontal' action="/{% if is_oauth %}oauth-{% endif %}engagements/edit/{{ engagement.id }}/" method='POST'>
+{% elif request.POST.engagement_id %}
+    {% include "preview_engagement_modal.html" %}
+    {% include "preview_oauth_engagement_modal.html" %}
+    <form id='campaign_edit' class='engagement_edit form-horizontal' action="/{% if is_oauth %}oauth-{% endif %}engagements/edit/{{ request.POST.engagement_id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='engagement_edit form-horizontal' action="/{% if is_oauth %}oauth-{% endif %}engagements/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    {{ form.engagement_id }}
+
+    <fieldset id="engagement_for_client" class="">
+    {% if engagement.client %}
+        <legend>
+            <button type="button" data-engagement="{{ engagement.id }}" data-action="{{ engagement.status.0 }}" data-is-oauth="{{ engagement.is_oauth }}" title="Toggle delivery" class="btn engagement-control glyphicon glyphicon-{% if engagement.status.0 == 0 %}minus btn-light-blue{% elif engagement.status.0 == 1 %}refresh btn-light-green{% elif engagement.status.0 == 2 %}pause btn-grey{% elif engagement.status.0 == 3 %}remove btn-red{% elif engagement.status.0 == 4 %}ok btn-dark-green{% endif %}"></button>
+            {% if engagement.status.0 == 3 %}
+                <span data-engagement="{{ engagement.id }}" class="engagements-edit-status-text engagement-error-tag" title="{{ engagement.status.2.1 }}">Error {{ engagement.status.2.0}}</span>
+            {% else %}
+                <span data-engagement="{{ engagement.id }}" class="engagements-edit-status-text">
+                    {% if engagement.status.0 == 0 %}
+                        Not Launched
+                    {% elif engagement.status.0 == 1 %}
+                        In Progress
+                    {% elif engagement.status.0 == 2 %}
+                        Paused
+                    {% elif engagement.status.0 == 4 %}
+                        Completed
+                    {% endif %}
+                </span>
+            {% endif %}
+            {% if is_oauth %}OAuth {% endif %}Engagement for client <a href="/clients/edit/{{ engagement.client.id }}/">{{ engagement.client.name }}</a></legend>
+    {% elif engagement.campaign %}
+        <legend>
+            <button type="button" data-engagement="{{ engagement.id }}" data-action="{{ engagement.status.0 }}" data-is-oauth="{{ engagement.is_oauth }}" title="Toggle delivery" class="btn engagement-control glyphicon glyphicon-{% if engagement.status.0 == 0 %}minus btn-light-blue{% elif engagement.status.0 == 1 %}refresh btn-light-green{% elif engagement.status.0 == 2 %}pause btn-grey{% elif engagement.status.0 == 3 %}remove btn-red{% elif engagement.status.0 == 4 %}ok btn-dark-green{% endif %}"></button>
+            {% if engagement.status.0 == 3 %}
+                <span data-engagement="{{ engagement.id }}" class="engagements-edit-status-text engagement-error-tag" title="{{ engagement.status.2.1 }}">Error {{ engagement.status.2.0}}</span>
+            {% else %}
+                <span data-engagement="{{ engagement.id }}" class="engagements-edit-status-text">
+                    {% if engagement.status.0 == 0 %}
+                        Not Launched
+                    {% elif engagement.status.0 == 1 %}
+                        In Progress
+                    {% elif engagement.status.0 == 2 %}
+                        Paused
+                    {% elif engagement.status.0 == 4 %}
+                        Completed
+                    {% endif %}
+                </span>
+            {% endif %}
+            {% if is_oauth %}OAuth {% endif %}Engagement for campaign <a href="/campaigns/edit/{{ engagement.campaign.id }}/">{{ engagement.campaign.name }}</a></legend>
+    {% else %}
+        <legend>New {% if is_oauth %}OAuth {% endif %}Engagement</legend>
+    {% endif %}
+
+        {% bootstrap_field form.campaign layout='horizontal' %}
+        {% bootstrap_field form.name layout='horizontal' %}
+        {% bootstrap_field form.description layout='horizontal' %}
+
+        {% if is_oauth %}
+            {% bootstrap_field form.oauth_consumer layout='horizontal' %}
+        {% else %}
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="id_open_redirect">
+                Open Redirect
+            </label>
+            <div class="col-md-9">
+                <div class="input-group">
+                    <select
+                        class="form-control"
+                        id="id_open_redirect"
+                        name="open_redirect"
+                        required="required"
+                        title="{{ form.open_redirect.title }}">
+                            <option value="">---------</option>
+                        {% for open_redirect in open_redirects %}
+                            <option {% if open_redirect_id == open_redirect.id %}selected="selected" {% endif %}value="{{ open_redirect.id }}">{{ open_redirect.url }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="input-group-addon">>>></span>
+                </div>
+                <span class="help-block">
+                    {% autoescape off %}
+                    {{ form.open_redirect.help_text }}
+                    {% endautoescape %}
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="id_domain">
+                Landing Page URL
+            </label>
+            <div class="col-md-9">
+                <div class="input-group">
+                    <select
+                        class="form-control"
+                        id="id_domain"
+                        name="domain"
+                        required="required"
+                        title="{{ form.domain.title }}">
+                            <option value="">---------</option>
+                        {% for domain in domains %}
+                            <option {% if phishing_domain_id == domain.id %}selected="selected" {% endif %}value="{{ domain.id }}">{{domain.protocol}}://{{ domain.domain_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="input-group-addon">/</span>
+                    <input
+                        class="form-control"
+                        id="id_path"
+                        maxlength="100"
+                        name="path"
+                        pattern="^[\-\_\.\:\/\?\=A-Za-z0-9]+$"
+                        required="required"
+                        title="{{ form.path.title }}"
+                        type="text"
+                        {% if form.initial.path %}value="{{ form.initial.path }}"{% else %}value=""{% endif %}>
+                </div>
+                <span class="help-block">
+                    {% autoescape off %}
+                    {{ form.path.help_text }}
+                    {% endautoescape %}
+                </span>
+            </div>
+        </div>
+        {% endif %}
+
+        {% bootstrap_field form.schedule layout='horizontal' addon_after='<a onclick="saveStep(\'engagement\')" href="/schedules/add/" title="Create Schedule" class="glyphicon glyphicon-plus" ></a>' %}
+        {% bootstrap_field form.email_server layout='horizontal' addon_after='<a onclick="saveStep(\'engagement\')" href="/email-servers/add/" title="Create Email Server" class="glyphicon glyphicon-plus" ></a>' %}
+        {% bootstrap_field form.email_template layout='horizontal' addon_after='<a onclick="saveStep(\'engagement\')" href="/email-templates/add/" title="Create email template" class="glyphicon glyphicon-plus" ></a>' %}
+        {% if form.landing_page != None %}
+            {% bootstrap_field form.landing_page layout='horizontal' addon_after='<a onclick="saveStep(\'engagement\')" href="/landing-pages/add/" title="Create langding page" class="glyphicon glyphicon-plus" ></a>' %}
+        {% endif %}
+        {% if form.redirect_page != None %}
+            {% bootstrap_field form.redirect_page layout='horizontal' addon_after='<a onclick="saveStep(\'engagement\')" href="/redirect-pages/add/" title="Create langding page" class="glyphicon glyphicon-plus" ></a>' %}
+        {% endif %}
+        {% bootstrap_field form.target_lists layout='horizontal' %}
+        <div class="form-group">
+            <div class="col-md-1"></div> <div class="col-md-11">
+                <div class="submit_block">
+                    <a href="/engagements/list" class="btn btn-default" id="back-to-list">Back To List</a>
+                    {% if engagement %}
+                        <a href="/engagements/csv-report/{{ engagement.id }}/" class="btn btn-default btn-purple">Get CSV</a>
+                        <a href="/engagements/xml-report/{{ engagement.id }}/" class="btn btn-default btn-purple">Get XML</a>
+                        <a href="/engagements/report/{{ engagement.id }}/" target="_blank" class="btn btn-success">View Results</a>
+                        <a href="/{% if is_oauth %}oauth-{% endif %}engagements/delete/{{ engagement.id }}/" class="btn btn-danger" id="del">Delete</a>
+                        <a class="btn btn-orange" id="engagement_preview_button" data-toggle="modal" data-engagement="{{ engagement.id }}" data-show-begin-button="true" data-is-oauth="{{ engagement.is_oauth }}">Preview</a>
+                    {% endif %}
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" />
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    </form>
+
+{% if engagement %}
+    {% include "vector_emails_list.html" %}
+{% endif %}
+
+{% endblock %}

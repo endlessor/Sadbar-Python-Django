@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+{% block content %}
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                Webhook URL
+                {% if 'webhook_url' in sorting and '-webhook_url' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-webhook_url' %}"></a>
+                {% elif '-webhook_url' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'webhook_url' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'webhook_url' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Description
+                {% if 'description' in sorting and '-description' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-description' %}"></a>
+                {% elif '-description' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'description' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'description' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for slack_hook in objects %}
+        <tr>
+            <td> {{ slack_hook.id }} </td>
+            <td> <a title="Edit" href="/slack-hooks/edit/{{ slack_hook.id }}">{{ slack_hook.webhook_url }}</a> </td>
+            <td> {{ slack_hook.description }} </td>
+            <td style="width: 50px; text-align: center;">
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/slack-hooks/edit/{{ slack_hook.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('slack-hooks', {{ slack_hook.id }})"></a>
+            </td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td colspan="3"> <a title="Add Slack Hook" href="/slack-hooks/add/">Add Slack Hook</a> </td>
+        </tr>
+    </tbody>
+</table>
+
+{% with order_by="order_by="|add:sorting %}
+{% bootstrap_pagination page extra=order_by %}
+{% endwith %}
+{% endblock content %}

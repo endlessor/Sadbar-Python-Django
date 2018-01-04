@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block extjs %}
+<script src="{% static 'js/lodash.min.js' %}" type="text/javascript" charset="utf-8"></script>
+{% endblock extjs %}
+
+{% block content %}
+
+{% if shoalscrape_task %}
+    <form id='shoalscrape_task_edit_form' class='shoalscrape-task-edit form-horizontal' action="/shoalscrape-tasks/edit/{{ shoalscrape_task.id }}/" method='POST'>
+{% elif request.POST.shoalscrape_task_id %}
+    <form id='shoalscrape_task_edit_form' class='shoalscrape-task-edit form-horizontal' action="/shoalscrape-tasks/edit/{{ request.POST.shoalscrape_task_id }}/" method='POST'>
+{% else %}
+    <form id='shoalscrape_task_edit_form' class='shoalscrape-task-edit form-horizontal' action="/shoalscrape-tasks/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    {{ form.shoalscrape_task_id }}
+
+    <fieldset id="shoalscrape_task_edit" class="">
+    {% if shoalscrape_task %}
+        <legend>
+            <button type="button" data-shoalscrape-task="{{ shoalscrape_task.id }}" data-action="{{ shoalscrape_task.status.0 }}" title="Toggle delivery" class="btn shoalscrape-task-control glyphicon glyphicon-{% if shoalscrape_task.status.0 == 0 %}minus btn-light-blue{% elif shoalscrape_task.status.0 == 1 %}refresh btn-light-green{% elif shoalscrape_task.status.0 == 2 %}pause btn-grey{% elif shoalscrape_task.status.0 == 3 %}remove btn-red{% elif shoalscrape_task.status.0 == 4 %}ok btn-dark-green{% endif %}"></button>
+            {% if shoalscrape_task.status.0 == 3 %}
+                <span data-shoalscrape-task="{{ shoalscrape_task.id }}" class="shoalscrape-tasks-edit-status-text shoalscrape-task-error-tag" title="{{ shoalscrape_task.status.1 }}">Error</span>
+            {% else %}
+                <span data-shoalscrape-task="{{ shoalscrape_task.id }}" class="shoalscrape-tasks-edit-status-text">
+                    {% if shoalscrape_task.status.0 == 0 %}
+                        Not Launched
+                    {% elif shoalscrape_task.status.0 == 1 %}
+                        In Progress
+                    {% elif shoalscrape_task.status.0 == 2 %}
+                        Paused
+                    {% elif shoalscrape_task.status.0 == 4 %}
+                        Completed
+                    {% endif %}
+                </span>
+            {% endif %}
+            ShoalScrape Task for {{ shoalscrape_task.company }}</legend>
+
+        <div class="form-group">
+            <textarea id="shoalscrape_console_widget"
+                      disabled="disabled"
+                      style="width: 800px;
+                             height: 500px;
+                             background: lightgray;
+                             border:1px solid #999999;
+                             font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;">
+            </textarea>
+        </div>
+
+    {% else %}
+        <legend>New ShoalScrape Task</legend>
+    {% endif %}
+
+        {% bootstrap_field form.shoalscrape_creds layout='horizontal' %}
+        {% bootstrap_field form.company layout='horizontal' %}
+        {% bootstrap_field form.domain layout='horizontal' %}
+        {% bootstrap_field form.company_linkedin_id layout='horizontal' %}
+
+        {% if shoalscrape_task %}
+        {% bootstrap_field form.last_started_at layout='horizontal' %}
+        {% bootstrap_field form.path layout='horizontal' %}
+        {% endif %}
+
+        <div class="form-group">
+            <div class="col-md-2">
+            {% if shoalscrape_task %}
+                <a class="btn btn-default btn-dark-green" id="auto_update_toggle">Auto-update on</a>
+            {% endif %}
+            </div>
+            <div class="col-md-10">
+                <div class="submit_block">
+                    <a href="/shoalscrape-tasks/list/" class="btn btn-default" id="back-to-list">Back To List</a>
+                    {% if shoalscrape_task %}
+                        <a href="{{ csv_url }}" class="btn btn-success" download>Download CSV</a>
+                        <a href="/shoalscrape-tasks/delete/{{ shoalscrape_task.id }}/" class="btn btn-danger" id="del">Delete</a>
+                    {% endif %}
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" />
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if oauth_result %}
+    <form id='oauth_result_edit_form' class='oauth_result_edit form-horizontal' action="/oauth-results/edit/{{ oauth_result.id }}/" method='POST'>
+{% elif request.POST.id %}
+    <form id='oauth_result_edit_form' class='oauth_result_edit form-horizontal' action="/oauth-results/edit/{{ request.POST.id }}/" method='POST'>
+{% else %}
+    <form id='oauth_result_edit_form' class='oauth_result_edit form-horizontal' action="/oauth-results/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    <fieldset id="oauth_result" class="">
+        <legend>OAuth Result</legend>
+        {% bootstrap_field form.oar_id layout='horizontal' %}
+        {% bootstrap_field form.email layout='horizontal' %}
+        {% bootstrap_field form.target layout='horizontal' %}
+        {% bootstrap_field form.oauth_engagement layout='horizontal' %}
+        {% bootstrap_field form.consumer layout='horizontal' %}
+        {% bootstrap_field form.ip layout='horizontal' %}
+        {% bootstrap_field form.timestamp layout='horizontal' %}
+        {% bootstrap_field form.userAgent layout='horizontal' %}
+        <div class="clearer"></div>
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <a href="/oauth-results/list" class="btn btn-default" id="back-to-list" title="Return to the OAuth Results list">Back To List</a>
+                    <a class="btn btn-default btn-dark-green" href="/oauth-apis/google/all/api-console/{{ oauth_result.id }}">Open API Console</a>
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </fieldset>
+    </form>
+{% endblock %}

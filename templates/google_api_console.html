@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block extjs %}
+<script src="{% static 'jstree/dist/jstree.min.js' %}" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+
+{% block extcss %}
+<link rel="stylesheet" href="{% static 'jstree/dist/themes/default/style.min.css' %}" />
+{% endblock %}
+
+{% block content %}
+<form id="google_api_console_form" class='form-horizontal'>
+    {% csrf_token %}
+    <fieldset class="">
+
+        <legend>Console Types for {{ oa_result.email }}</legend>
+        <a id="gmail_console_open_btn" class="btn btn-default{% if 'gmail' in available_scopes %} btn-dark-green{% else %} disabled{% endif %}" href="/oauth-apis/google/gmail/api-console/{{ oa_result.id }}/">Google Mail</a>
+        <a id="drive_console_open_btn" class="btn btn-default{% if 'drive' in available_scopes %} btn-dark-green{% else %} disabled{% endif %}" href="/oauth-apis/google/drive/api-console/{{ oa_result.id }}/">Google Drive</a>
+
+        <br><br>
+
+        {% if console_type == 'gmail' %}
+            <legend>Google Mail API Console for {{ oa_result.email }}</legend>
+        {% elif console_type == 'drive' %}
+            <legend>Google Drive API Console for {{ oa_result.email }}</legend>
+        {% endif %}
+
+        {% if console_type %}
+        <input id="oa_result_id" type="hidden" value="{{ oa_result.id }}">
+
+        <div id="google_api_console_container" class="form-group api-console-container">
+
+            {% if console_type == 'drive' %}
+                <div id="gdrive_jstree_container" class="api-jstree-widget-maximized">
+                    <div id="gdrive_jstree"></div>
+                    <div id="gdrive_jstree_info_panel">
+                        <a id="gdrive_jstree_info_panel_download_checked" class="btn btn-default btn-dark-green" title="Download the selected files to Sandbar">Download checked files</a>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div id="google_api_console_text_container">
+                <textarea id="google_api_console_widget" disabled="disabled" class="api_console_widget {% if console_type == 'drive' %}api-console-widget-minimized{% else %}api-console-widget-maximized{% endif %}">
+                </textarea>
+
+                {% if console_type == 'drive' %}
+                <a id="google_api_console_panel_swapper" class="btn btn-default api-console-panel-swapper-minimized" title="Change the size of the text console">Maximize</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if console_type == 'gmail' %}
+            {% include "gmail_api_console.html" %}
+        {% elif console_type == 'drive' %}
+            <br>
+            {% include "drive_api_console.html" %}
+        {% endif %}
+
+        <legend></legend>
+
+        {% if oauth_engagement_id %}
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
+            <a id="api_console_back_to_engagement_btn" class="btn btn-default" href="/oauth-engagements/edit/{{ oauth_engagement_id }}/" title="Return to the OAuth Engagement edit page">Back to Engagement</a>
+        </div>
+        {% else %}
+        <div class="col-md-4"></div>
+        <div class="col-md-2">
+            <a id="api_console_back_to_list_btn" class="btn btn-default" href="/oauth-results/list/" title="Return to the OAuth Results list">Back to List</a>
+        </div>
+        {% endif %}
+
+        {% if console_type %}
+        <div class="col-md-2">
+            <a id="api_console_download_console_btn" class="btn btn-default btn-dark-green" title="Download the contents of the console to a file">Download Console</a>
+        </div>
+        {% endif %}
+
+    </fieldset>
+</form>
+
+{% if plunder %}
+    <br>
+    <legend>Stored Plunder for {{ oa_result.email }}</legend>
+    {% include 'plunder_list.html' %}
+{% endif %}
+
+{% endblock %}

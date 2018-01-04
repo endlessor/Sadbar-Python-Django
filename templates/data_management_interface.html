@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block extjs %}
+<script src="{% static 'js/dropzone.js' %}" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+
+{% block extcss %}
+<link rel="stylesheet" href="{% static 'css/dropzone.css' %}" type="text/css" media="screen" title="no title" charset="utf-8" />
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<legend>Import Data</legend>
+
+<form id="data_import_form" action="/import-data/" enctype="multipart/form-data" class="dropzone">
+    {% csrf_token %}
+</form>
+
+<br />
+
+<legend>Export Data</legend>
+
+<form id='data_export_form' class='form-horizontal' action="/export-data/" method='POST'>
+{% csrf_token %}
+
+    <a id="toggle_scraper_user_agents" class="btn btn-default toggle-all-checkboxes">Check all Scraper User-Agents</a>
+    {% bootstrap_field export_form.scraper_user_agents layout='horizontal' %}
+    <a id="toggle_landing_pages" class="btn btn-default toggle-all-checkboxes">Check all Landing Pages</a>
+    {% bootstrap_field export_form.landing_pages layout='horizontal' %}
+    <a id="toggle_redirect_pages" class="btn btn-default toggle-all-checkboxes">Check all Redirect Pages</a>
+    {% bootstrap_field export_form.redirect_pages layout='horizontal' %}
+    <a id="toggle_email_templates" class="btn btn-default toggle-all-checkboxes">Check all Email Templates</a>
+    {% bootstrap_field export_form.email_templates layout='horizontal' %}
+
+    <div class="form-group">
+        <div class="col-md-3"></div> <div class="col-md-9">
+            <div class="submit_block">
+                <input type="submit" class="btn btn-primary" id="sub" value="Download Data" />
+            </div>
+        </div>
+    </div>
+    <div class="clearer"></div>
+</form>
+{% endblock %}

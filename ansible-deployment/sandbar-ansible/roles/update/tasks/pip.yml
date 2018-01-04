@@ -1,0 +1,38 @@
+---
+- name: Update | Copy settings.py to "{{ project.root }}/sandbar"
+  template:
+    src: roles/django/templates/settings.py
+    dest: "{{ project.root }}/sandbar/settings.py"
+      
+- name: Update | Install sandbar base requirements
+  shell: . {{ project.virtualenv }}bin/activate && pip install -r ./requirements/base.txt chdir="{{ project.root }}" 
+  
+- name: Update | Ensure "{{ project.root }}/manage.py" is Unicode
+  shell: dos2unix "{{ project.root }}/manage.py"
+
+- name: Update | Activate virtualenv venv and makemigrations
+  shell: . {{ project.virtualenv }}bin/activate && {{ project.root }}/manage.py makemigrations chdir="{{ project.root }}"
+  
+- name: Update | Activate virtualenv venv and configure djcelery
+  shell: . {{ project.virtualenv }}bin/activate && ./manage.py migrate djcelery chdir="{{ project.root }}"
+
+- name: Update | Activate virtualenv venv and migrate
+  shell: . {{ project.virtualenv }}bin/activate && ./manage.py migrate chdir="{{ project.root }}"
+  
+- name: Update | stop services
+  service: name={{item}} state=stopped
+  with_items:
+    - uwsgi-{{project.name}}
+    - nginx
+    - celerybeat
+    - celeryd
+    - rabbitmq-server
+    
+- name: Update | start services
+  service: name={{item}} state=started
+  with_items:
+    - rabbitmq-server
+    - celeryd
+    - celerybeat
+    - nginx
+    - uwsgi-{{project.name}}

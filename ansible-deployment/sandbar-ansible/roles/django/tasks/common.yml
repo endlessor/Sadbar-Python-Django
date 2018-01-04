@@ -1,0 +1,8 @@
+---
+- name: Django | configure permissions on {{project.root}}
+  file: 
+    path={{project.root}}
+    owner={{project.user}}
+    group={{project.group}}
+    recurse=yes
+    mode=0774

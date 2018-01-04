@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+
+{% block content %}
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover" id="landing-page-table">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                Name
+                {% if 'name' in sorting and '-name' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-name' %}"></a>
+                {% elif '-name' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'name' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'name' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Description
+                {% if 'description' in sorting and '-description' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-description' %}"></a>
+                {% elif '-description' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'description' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'description' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Type
+                {% if 'page_type' in sorting and '-page_type' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-page_type' %}"></a>
+                {% elif '-page_type' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'page_type' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'page_type' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Source URL
+                {% if 'url' in sorting and '-url' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-url' %}"></a>
+                {% elif '-url' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'url' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'url' %}"></a>
+                {% endif %}
+            </th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for landing_page in objects %}
+        <tr>
+            <td> {{ landing_page.id }} </td>
+            <td style="min-width: 100px"> <a title="Edit" href="/{% if apage == 'landing_pages' %}landing{% else %}redirect{% endif %}-pages/edit/{{ landing_page.id }}">{{ landing_page.name }}</a></td>
+            <td> {{ landing_page.description }} </td>
+            <td> {{ landing_page.get_page_type_display }} </td>
+            <td> {{ landing_page.url }} </td>
+            <td data-id="{{ landing_page.id }}"> {% ifequal landing_page.page_type 'page' %} <span class='glyphicon glyphicon-{{ landing_page.path|yesno:"ok, refresh-animate" }}'></span> {% endifequal %}
+            </td>
+            <td style="width: 75px; text-align: right;">
+                {% if landing_page.page_type == 'page' %}
+                <a class="glyphicon glyphicon-camera {{ landing_page.path|yesno:",invisible" }}" title="Preview" data-landing_id="{{ landing_page.id }}" href="javascript:void(0)"></a>
+                {% elif landing_page.page_type == 'manual' %}
+                <a class="glyphicon glyphicon-camera" title="Preview" data-landing_id="{{ landing_page.id }}" href="javascript:void(0)"></a>
+                {% elif landing_page.page_type == 'url' %}
+                <a class="glyphicon glyphicon-link" title="Visit" data-landing_link="{{ landing_page.url }}" href="javascript:void(0)"></a>
+                {% endif %}
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/{% if apage == 'landing_pages' %}landing{% else %}redirect{% endif %}-pages/edit/{{ landing_page.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('{% ifequal apage 'landing_pages' %}landing{% else %}redirect{% endifequal %}-pages', {{ landing_page.id }})"></a>
+            </td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td colspan="6"> <a title="Add Landing Page" href="/{% if apage == 'landing_pages' %}landing{% else %}redirect{% endif %}-pages/add/">Add {% if apage == 'landing_pages' %}Landing{% else %}Redirect{% endif %} Page</a> </td>
+        </tr>
+    </tbody>
+</table>
+    
+{% with order_by="order_by="|add:sorting %}
+{% bootstrap_pagination page extra=order_by %}
+{% endwith %}
+{% endblock content %}

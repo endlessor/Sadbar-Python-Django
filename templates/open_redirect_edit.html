@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if openRedirect %}
+    <form id='campaign_edit' class='open_redirect_edit form-horizontal' action="/open-redirects/edit/{{ openRedirect.id }}/" method='POST'>
+{% elif request.POST.id %}
+    <form id='campaign_edit' class='open_redirect_edit form-horizontal' action="/open-redirects/edit/{{ request.POST.id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='open_redirect_edit form-horizontal' action="/open-redirects/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    <fieldset id="open_redirect" class="">
+        <legend>Open Redirect</legend>
+        {% bootstrap_field form.or_id layout='horizontal' %}
+        <div class="form-group">
+            <div class="col-md-3">
+                <div class="control-label">
+                    <label for="{{ form.url.id_for_label }}">
+                        {{ form.url.label }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="input-group">
+                    <input class="form-control"
+                           id="id_url"
+                           name="url"
+                           title=""
+                           type="text"
+                           value="{% if form.initial.url %}{{ form.initial.url }}{% endif %}"
+                           style="width: 300%;">
+                </div>
+                <span class="help-block">
+                    {% autoescape off %}
+                    {{ form.help_text }}
+                    {% endautoescape %}
+                </span>
+            </div>
+        </div>
+        <div class="clearer"></div>
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <a href="/open-redirects/list" class="btn btn-default" id="back-to-list" title="Return to the Open Redirects list">Back To List</a>
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" title="Save Open Redirect changes" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </fieldset>
+    </form>
+{% endblock %}

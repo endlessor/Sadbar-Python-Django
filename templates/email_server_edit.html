@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if emailServer %}
+    <form id='campaign_edit' class='email_server_edit form-horizontal' action="/email-servers/edit/{{ emailServer.id }}/" method='POST'>
+{% elif request.POST.id %}
+    <form id='campaign_edit' class='email_server_edit form-horizontal' action="/email-servers/edit/{{ request.POST.id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='email_server_edit form-horizontal' action="/email-servers/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    <fieldset id="email_server" class="">
+        <legend>Email Server</legend>
+        {% bootstrap_field form.es_id layout='horizontal' %}
+        {% bootstrap_field form.host layout='horizontal' %}
+        {% bootstrap_field form.port layout='horizontal' %}
+        {% bootstrap_field form.use_tls layout='horizontal' %}
+        {% bootstrap_field form.login layout='horizontal' %}
+        {% bootstrap_field form.email_pw layout='horizontal' %}
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block" id="check_email_status"> </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-3">
+                <div class="control-label">
+                    <label for="{{ form.test_recipient.id_for_label }}">
+                        {{ form.test_recipient.label }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-5">
+                    <input class="form-control"
+                           id="id_test_recipient"
+                           name="test_recipient"
+                           placeholder="info@rhinosecuritylabs.com"
+                           title=""
+                           type="email"
+                           value="{% if form.initial.test_recipient %}{{ form.initial.test_recipient }}{% else %}info@rhinosecuritylabs.com{% endif %}">
+            </div>
+            <div class="col-md-4">
+                <div class="submit_block">
+                    <a href="javascript:void(0)" class="btn btn-success" id="check_email" >Check Server</a>
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <a href="/email-servers/list" class="btn btn-default" id="back-to-list" title="Return to the Email Servers list">Back To List</a>
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" title="Save Email Server changes" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </fieldset>
+    </form>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if shoalscrape_creds %}
+    <legend>Edit ShoalScrape Creds: {{ shoalscrape_creds.name }}</legend>
+    <form id='campaign_edit' class='shoalscrape_creds_edit form-horizontal' action="/shoalscrape-creds/edit/{{ shoalscrape_creds.id }}/" method='POST'>
+{% else %}
+    <legend>New ShoalScrape Creds</legend>
+    <form id='campaign_edit' class='shoalscrape_creds_edit form-horizontal' action="/shoalscrape-creds/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+        {% bootstrap_form form layout='horizontal' %}
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <a href="/shoalscrape-creds/list" class="btn btn-default" id="back-to-list">Back To List</a>
+                    {% if shoalscrape_creds %}
+                    <a href="/shoalscrape-creds/delete/{{ shoalscrape_creds.id }}/" class="btn btn-danger" id="del">Delete</a>
+                    {% endif %}
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </form>
+{% endblock %}

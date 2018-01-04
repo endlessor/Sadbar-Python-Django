@@ -1,0 +1,29 @@
+---
+- name: rabbitmq | Add the RabbitMQ public GPG key to the apt repo
+  apt_key: url=https://www.rabbitmq.com/rabbitmq-release-signing-key.asc state=present
+
+- name: rabbitmq | Ensure that the RabbitMQ service is not running
+  service: name=rabbitmq-server state=stopped enabled=no
+  ignore_errors: yes
+    
+- name: rabbitmq | Ensure RabbitMQ server is not installed before installing
+  raw: apt-get remove rabbitmq* -y --allow-change-held-packages
+
+- name: rabbitmq | Ensure /var/lib/rabbitmq does not exist before installing
+  raw: rm -rf /var/lib/rabbitmq
+  
+- name: rabbitmq | Install RabbitMQ server
+  apt: deb=https://www.rabbitmq.com/releases/rabbitmq-server/v{{version.rabbitmq}}/rabbitmq-server_{{version.rabbitmq}}-1_all.deb state=present force=yes
+
+- name: rabbitmq | Ensure that the RabbitMQ service has been started
+  service: name=rabbitmq-server state=started enabled=yes
+      
+- name: rabbitmq | Disable the RabbitMQ Management Console
+  rabbitmq_plugin: names=rabbitmq_management state=disabled
+  
+- include: setup_vhosts.yml
+
+- include: setup_users.yml
+
+- name: rabbitmq | Ensure that the RabbitMQ service has been restarted
+  service: name=rabbitmq-server state=restarted enabled=yes

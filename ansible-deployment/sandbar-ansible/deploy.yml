@@ -1,0 +1,58 @@
+---
+- name: Deploy Sandbar
+  hosts: local
+  become: true
+  become_user: root
+  vars_files:
+    - ./group_vars/config.yml
+    - ./group_vars/package-versions.yml
+  
+  roles:
+    - hostname
+    - postgres
+    - backup
+    - rabbitmq
+    - nginx
+    - ansible-role-ssl-certs
+    - node
+    - django
+    - uwsgi
+    - celery
+
+- name: Restart Sandbar stack
+  hosts: local
+  become: true
+  become_user: root
+  vars_files:
+    - ./group_vars/config.yml
+    - ./group_vars/package-versions.yml
+  tasks:
+
+  - name: stop services
+    service: name="{{item}}" state=stopped
+    with_items:
+      - uwsgi-{{project.name}}
+      - nginx
+      - celerybeat
+      - celeryd
+      - rabbitmq-server
+
+  - name: start services
+    service: name="{{item}}" state=started enabled=yes
+    with_items:
+      - rabbitmq-server
+      - celeryd
+      - celerybeat
+      - nginx
+      - uwsgi-{{project.name}}
+
+  - name: Apply version control
+    shell: apt-mark hold {{item}}
+    with_items:
+      - celeryd
+      - nginx
+      - postgresql
+      - rabbitmq-server
+      - virtualenv
+      - nodejs
+      - npm

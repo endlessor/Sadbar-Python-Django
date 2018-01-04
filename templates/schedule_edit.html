@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block extcss %}
+<link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" type="text/css" media="screen" title="no title" charset="utf-8" />
+{% endblock extcss %}
+
+{% block extjs %}
+<script src="{% static 'js/moment-with-locales.min.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'js/bootstrap-datetimepicker.min.js' %}" type="text/javascript" charset="utf-8"></script>
+{% endblock extjs %}
+
+{% block content %}
+{% if schedule %}
+    <form id='campaign_edit' class='schedule_edit form-horizontal' action="/schedules/edit/{{ schedule.id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='schedule_edit form-horizontal' action="/schedules/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+
+        {% bootstrap_field form.schedule_id layout='horizontal' %}
+        {% bootstrap_field form.name layout='horizontal' %}
+        {% bootstrap_field form.description layout='horizontal' %}
+        {% bootstrap_field form.is_default layout='horizontal' %}
+
+        <div class="form-group row" id="interval_form_group">
+
+            <div class="col-md-3">
+                <div class="control-label">
+                    <label for="{{ form.interval.id_for_label }}">
+                        {{ form.interval.label }}
+                    </label>
+                    <span class="help-block schedule-edit-help-label">
+                        HH:MM:SS
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-md-9" id="column_interval">
+                <div class="input-group date" id="interval_picker">
+                    <input class="form-control"
+                           id="{{ form.interval.id_for_label }}"
+                           name="{{ form.interval.html_name }}"
+                           placeholder="{{ form.interval.label }}"
+                           title=""
+                           type="text"
+                           value="{{ form.initial.interval }}">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+                <span class="help-block">
+                  {{ form.interval.help_text }}
+                </span>
+            </div>
+        </div>
+
+        {% bootstrap_field form.excluded_dates layout='horizontal' %}
+
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <a href="/schedules/list" class="btn btn-default" id="back-to-list">Back To List</a>
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </form>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% block content %}
+
+        <div class="col-md-2">
+            <a id="root_directory_btn" class="btn btn-default btn-light-green" title="List the root directory of the Google Drive account associated with {{ oa_result.email }}">Root Directory</a>
+        </div>
+
+        <div class="col-md-1"></div>
+
+        <div class="col-md-2" style="white-space: nowrap;">
+            <a id="drive_files_search_btn" class="btn btn-default btn-light-blue">Search</a>
+            <a href="https://developers.google.com/drive/v3/web/search-parameters#examples" target="_blank" class="glyphicon glyphicon-question-sign"></a>
+        </div>
+        <div class="col-md-3">
+            <input id="api_console_search_query" style="width: 180%; text-align: center;" value="">
+        </div>
+
+        <div class="col-md-2"></div>
+
+        <div class="col-md-1">
+            <a id="api_console_clear_btn" class="btn btn-default btn-red" title="Clear the API console, but do not return to the root directory">Clear</a>
+        </div>
+        <div class="col-md-1">
+            <a id="api_console_reset_btn" class="btn btn-default btn-red" title="Clear the API console and return to the root directory">Reset</a>
+        </div>
+
+        <br><br>
+
+        <legend></legend>
+
+        <div class="form-group">
+            <div class="col-md-3">
+                <a id="drive_list_directories_btn" class="list-content-toggle list-selection-type-btn btn btn-default btn-dark-green selected-content-type">Include directories</a>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-3">
+                <a id="drive_files_get_directory_btn" class="btn btn-default btn-light-blue">Get directory by ID</a>
+            </div>
+            <div class="col-md-2">
+                <input id="drive_files_directory_input" style="width: 165%; text-align: center;">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-3">
+                <a id="drive_list_files_btn" class="list-content-toggle list-selection-type-btn btn btn-default btn-dark-green selected-content-type">Include files</a>
+            </div>
+            <div class="col-md-2">
+                <input id="drive_files_list_page_size" style="width: 120%; text-align: center;" value="10">
+            </div>
+            <div class="col-md-2">
+                <p style="font-weight: bold;">results</p>
+            </div>
+            <div class="col-md-3">
+                <a id="drive_files_download_btn" class="btn btn-default btn-light-blue" title="Download a file with the indicated ID to Sandbar">Download file by ID</a>
+            </div>
+            <div class="col-md-2">
+                <input id="drive_files_download_id" style="text-align: center;">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-3">
+                <a id="drive_list_detail_btn" class="list-content-toggle btn btn-default btn-dark-green selected-content-type" title="View additional information about retrieved results">Include details</a>
+            </div>
+        </div>
+
+{% endblock %}

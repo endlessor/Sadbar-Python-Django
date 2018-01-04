@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+{% block content %}
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>
+                ID
+                {% if 'id' in sorting and '-id' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-id' %}"></a>
+                {% elif '-id' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'id' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'id' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Name
+                {% if 'name' in sorting and '-name' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-name' %}"></a>
+                {% elif '-name' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'name' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'name' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Username
+                {% if 'username' in sorting and '-username' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-username' %}"></a>
+                {% elif '-username' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'username' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'username' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Password
+                {% if 'password' in sorting and '-password' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-password' %}"></a>
+                {% elif '-password' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'password' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'password' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Scraper User-Agent
+                {% if 'scraper_user_agent' in sorting and '-scraper_user_agent' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-scraper_user_agent' %}"></a>
+                {% elif '-scraper_user_agent' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'scraper_user_agent' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'scraper_user_agent' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for shoalscrape_creds in objects %}
+        <tr>
+            <td> {{ shoalscrape_creds.id }} </td>
+            <td> <a href="/shoalscrape-creds/edit/{{ shoalscrape_creds.id }}/"> {{ shoalscrape_creds.name }}</a> </td>
+            <td> {{ shoalscrape_creds.username }} </td>
+            <td> {{ shoalscrape_creds.password }} </td>
+            <td> <a href="/scraper-user-agents/edit/{{ shoalscrape_creds.scraper_user_agent.id }}/">{{ shoalscrape_creds.scraper_user_agent.name }}</a> </td>
+            <td style="width: 50px; text-align: center;">
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/shoalscrape-creds/edit/{{ shoalscrape_creds.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('shoalscrape-creds', {{ shoalscrape_creds.id }})"></a>
+            </td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td colspan="3"> <a title="Add ShoalScrape Creds" href="/shoalscrape-creds/add/">Add ShoalScrape Creds</a> </td>
+        </tr>
+    </tbody>
+</table>
+
+{% with order_by="order_by="|add:sorting %}
+{% bootstrap_pagination page extra=order_by %}
+{% endwith %}
+{% endblock content %}

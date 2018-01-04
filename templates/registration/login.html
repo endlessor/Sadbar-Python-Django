@@ -1,0 +1,63 @@
+{% load i18n %}
+
+{% comment %}
+    Idea for password autocomplete confuser:
+            http://stackoverflow.com/a/36189742
+    That didn't work. So I decided to try creating the entire thing in pure JS.
+        Creating DOM elements in pure JS:
+            http://stackoverflow.com/a/14337899
+    This also was not sufficient. What ended up working was making a bunch of
+    decoy elements.
+{% endcomment %}
+
+{% block content %}
+
+<html>
+    <head>
+        <title>404 Not Found</title>
+        <style type="text/css">input{margin:0;background-color:#fff;border:1px solid #fff;}</style>
+    </head>
+    <body>
+        <h1>Not Found</h1>
+        <p>The requested URL {{ accessed_path }} was not found on this server.</p>
+        <center>
+            <form method="post" id="037401868335282806" name="037401868335282806" action="/accounts/login/">
+            {% csrf_token %}
+            </form>
+        </center>
+        <script>
+            var cPhf7IJsSsQMLKjUJ8Z3KPMseWJ623mI = Math.random();
+
+            var form = document.getElementById("037401868335282806");
+            var obj_cPhf7IJsSsQMLKjUJ8Z3KPMseWJ623mI = form.appendChild(document.createElement("input"));
+            obj_cPhf7IJsSsQMLKjUJ8Z3KPMseWJ623mI.outerHTML = '<input id="cPhf7IJsSsQMLKjUJ8Z3KPMseWJ623mI" name="cPhf7IJsSsQMLKjUJ8Z3KPMseWJ623mI" value="' + cPhf7IJsSsQMLKjUJ8Z3KPMseWJ623mI + '" type="hidden"></input>';
+
+            var table = form.appendChild(document.createElement("table"));
+
+            var tr0 = table.appendChild(document.createElement("tr"));
+            var tr1 = table.appendChild(document.createElement("tr"));
+
+            var td0 = tr0.appendChild(document.createElement("td"));
+            var td1 = tr1.appendChild(document.createElement("td"));
+
+            for (i = 0; i < Math.random() * 10000; i++) {
+                var procedural_input = td0.appendChild(document.createElement("input"));
+                procedural_input.outerHTML = '<input tabindex="-1" style="border: 0px; position: fixed; top: 0px; width: 0px; height: 0px;"></input>'
+            }
+            for (i = 0; i < Math.random() * 10000; i++) {
+                var procedural_input = td1.appendChild(document.createElement("input"));
+                procedural_input.outerHTML = '<input tabindex="-1" style="border: 0px; position: fixed; top: 0px; width: 0px; height: 0px;"></input>'
+            }
+
+            var submit = form.appendChild(document.createElement("input"));
+            submit.outerHTML = '<input type="submit" value="               " />';
+
+            var obj_JWThOLZssPAksOHw8NnSY20cs33I8i8e = td0.appendChild(document.createElement("input"));
+            obj_JWThOLZssPAksOHw8NnSY20cs33I8i8e.outerHTML = '<input id="' + cPhf7IJsSsQMLKjUJ8Z3KPMseWJ623mI + '_JWThOLZssPAksOHw8NnSY20cs33I8i8e" name="' + cPhf7IJsSsQMLKjUJ8Z3KPMseWJ623mI + '_JWThOLZssPAksOHw8NnSY20cs33I8i8e" title=""></input>';
+
+            var obj_Y4tcS8uSkZvZO82QKUycF3KapVgsTGVS = td1.appendChild(document.createElement("input"));
+            obj_Y4tcS8uSkZvZO82QKUycF3KapVgsTGVS.outerHTML = '<input id="' + cPhf7IJsSsQMLKjUJ8Z3KPMseWJ623mI + '_Y4tcS8uSkZvZO82QKUycF3KapVgsTGVS" name="' + cPhf7IJsSsQMLKjUJ8Z3KPMseWJ623mI + '_Y4tcS8uSkZvZO82QKUycF3KapVgsTGVS" title="" type="password"></input>';
+        </script>
+    </body>
+</html>
+{% endblock %}

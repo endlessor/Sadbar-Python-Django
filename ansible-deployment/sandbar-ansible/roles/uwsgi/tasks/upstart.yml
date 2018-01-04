@@ -1,0 +1,14 @@
+---
+- name: uWsgi | Install uwsgi upstart job.
+  template: 
+    src: uwsgi.service
+    dest: /etc/systemd/system/uwsgi-{{project.name}}.service
+    owner: root
+    group: root
+    mode: 0774
+
+- name: uWsgi | Start daemon and enable it for system startup
+  service: 
+    name: "uwsgi-{{project.name}}"
+    state: started
+    enabled: yes

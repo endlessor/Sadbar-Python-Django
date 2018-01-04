@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+{% block content %}
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                Name
+                {% if 'name' in sorting and '-name' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-name' %}"></a>
+                {% elif '-name' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'name' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'name' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Description
+                {% if 'description' in sorting and '-description' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-description' %}"></a>
+                {% elif '-description' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'description' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'description' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Scope
+                {% if 'scope' in sorting and '-scope' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-scope' %}"></a>
+                {% elif '-scope' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'scope' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'scope' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Callback URL
+                {% if 'callback_url' in sorting and '-callback_url' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-callback_url' %}"></a>
+                {% elif '-callback_url' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'callback_url' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'callback_url' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Bounce URL
+                {% if 'bounce_url' in sorting and '-bounce_url' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-bounce_url' %}"></a>
+                {% elif '-bounce_url' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'bounce_url' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'bounce_url' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for oauth_consumer in objects %}
+        <tr>
+            <td> {{ oauth_consumer.id }} </td>
+            <td> <a title="Edit" href="/oauth-consumers/edit/{{ oauth_consumer.id }}">{{ oauth_consumer.name }}</a></td>
+            <td> {{ oauth_consumer.description }}</td>
+            <td> {{ oauth_consumer.scope }}</td>
+            <td> {{ oauth_consumer.callback_url }}</td>
+            <td> {{ oauth_consumer.bounce_url }}<a class="divider-vertical"></a><a class="glyphicon glyphicon-link" title="Visit {{ oauth_consumer.bounce_url }}" href="{{ oauth_consumer.bounce_url }}"></a></td>
+            <td style="width: 50px; text-align: center;">
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/oauth-consumers/edit/{{ oauth_consumer.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('oauth-consumers', {{ oauth_consumer.id }})"></a>
+            </td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td colspan="3"> <a title="Add OAuth Consumer" href="/oauth-consumers/add/">Add OAuth Consumer</a> </td>
+        </tr>
+    </tbody>
+</table>
+
+{% with order_by="order_by="|add:sorting %}
+{% bootstrap_pagination page extra=order_by %}
+{% endwith %}
+{% endblock content %}

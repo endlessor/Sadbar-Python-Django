@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if user %}
+    <form id='campaign_edit' class='form-horizontal' action="/users/edit/{{ user.id }}/" method='POST'>
+{% elif request.POST.user_id %}
+    <form id='campaign_edit' class='form-horizontal' action="/users/edit/{{ request.POST.user_id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='form-horizontal' action="/users/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    <fieldset id="client_{{ user.name }}" class="">
+        {% if user %}
+            <legend>User {{ user.username }}</legend>
+            {% else %}
+            <legend>Add new user</legend>
+        {% endif %}
+
+        {% bootstrap_form form layout='horizontal' %}
+
+        <div class="form-group">
+            <div class="col-md-1"></div> <div class="col-md-11">
+                <div class="submit_block">
+                    <a href="/users/list" class="btn btn-default" id="back-to-list" value="Back To List">Back To List</a>
+                    <a href="/users/delete/{{ user.id }}" class="btn btn-danger" id="del">Delete</a>
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" />
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    </form>
+{% endblock %}

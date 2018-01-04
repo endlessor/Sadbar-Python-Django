@@ -1,0 +1,9 @@
+version:
+  celeryd: 3.1
+  nginx: 1.10
+  postgresql: 9.5
+  rabbitmq: 3.6.3
+  virtualenv: 15.0
+  node: 4.2.6
+  npm:  3.5.2
+  phantomjs: 2.1.13

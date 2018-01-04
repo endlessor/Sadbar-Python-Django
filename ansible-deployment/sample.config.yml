@@ -1,0 +1,95 @@
+---
+hostname: sandbar-test
+domainname: rhino.lan
+
+# General project variables
+project:
+
+  # The project's name. Generally does not need to be changed
+  # Optional:
+  name: sandbar
+
+  # The user below will be created as a Linux account to own the project directory and services like Celery or UWSGI. You may include the credentials for an existing user here if you wish.
+  # This user will also be used to log into the Sandbar web UI for the first time.
+  # Recommended: "userPassword" should be changed for security purposes
+  user: sandbar
+  userPassword: CHANGE_ME
+
+  # Do not change this - sets the group to share access with services like Celery and UWSGI
+  # IGNORE:
+  group: www-data
+
+  # These directories will be created, they do not need to exist prior to deployment. You may change them if you wish. They are used to hold the "in use" Sandbar application files
+  # Optional:
+  root: /opt/sandbar
+  virtualenv: /opt/sandbar/venv/
+
+# Definition of variables for ./roles/nginx/templates/nginx.conf
+nginx:
+
+  # Can be changed to total number of cores plus 1 for better performance
+  # OPTIONAL: usually not necessary
+  worker_processes: 2
+
+# Definition variables for ./roles/uwsgi/templates/sandbar_uwsgi.ini
+# OPTIONAL: usually not necessary
+uwsgi_processes: 5
+
+# Definition of variables for ./roles/django/templates/settings.py and ./roles/django/tasks/pip.yml
+# Required: this is used as the email address to which test emails are sent.
+admin_email: 'info@rhinosecuritylabs.com'
+
+# Definition of variables for ./roles/postgres/tasks/access.yml ./roles/postgres/tasks/database.yml and ./roles/django/templates.settings.py
+# Required: passwords should be changed for security purposes
+database:
+  name: sandbar
+  user: sandbar
+  password: CHANGE_ME
+
+# Definition of variables for ./roles/celery/templates/celeryd.conf
+# Required: passwords should be changed for security purposes
+celeryd_user: sandbar
+celeryd_group: sandbar
+celeryd_password: CHANGE_ME
+
+# Definition of variables for ./roles/rabbit/tasks/setup_users.yml ./roles/rabbit/tasks/setup_vhosts.yml amd ./roles/django/templates.settings.py
+# Required: passwords should be changed for security purposes. Changing rabbit user can cause trouble
+rabbitmq_admin_user: admin
+rabbitmq_admin_password: CHANGE_ME
+rabbitmq_application_vhost: "{{ project.name }}"
+rabbitmq_application_user: "{{ project.user }}"
+rabbitmq_application_password: CHANGE_ME
+
+# Defines a secret key for your particular instance of sandbar (a salt, basically). Change this to a long string of letters and numbers, capitalization allowed but no special characters.
+# Example key: wddlGmcdZcxVNtQH5z1e4PZjwvxdN3WV
+# Required: same as passwords, should be changed for security purposes
+SECRET_KEY: 'CHANGE_ME'
+
+#
+#SSL Self Signed certs will only generate if set to true, an existing self signed cert does not exist and if a trusted cert does not exist in ./files/ssl/{{ssl_certs_common_name}}.*
+ssl_certs_generate_self_signed: true
+
+ssl_certs_country: "US"
+ssl_certs_locality: "New York"
+ssl_certs_organization: "Your company"
+ssl_certs_state: "New York"
+ssl_certs_common_name: "{{ hostname }}.{{ domainname }}"
+ssl_certs_days: "365"
+ssl_certs_fields: "/C={{ssl_certs_country}}/ST={{ssl_certs_state}}/L={{ssl_certs_locality}}/O={{ssl_certs_organization}}/CN={{ssl_certs_common_name}}"
+
+ssl_certs_path: "/etc/nginx/ssl/{{ssl_certs_common_name}}"
+ssl_certs_path_owner: "www-data"
+ssl_certs_path_group: "www-data"
+ssl_certs_privkey_path: "{{ssl_certs_path}}/{{ssl_certs_common_name}}.key"
+ssl_certs_cert_path: "{{ssl_certs_path}}/{{ssl_certs_common_name}}.pem"
+ssl_certs_csr_path: "{{ssl_certs_path}}/{{ssl_certs_common_name}}.csr"
+ssl_certs_dhparam_path: "{{ssl_certs_path}}/dhparam.pem"
+ssl_certs_mode: "0700"
+
+ssl_certs_local_privkey_path: "./files/ssl/{{ domainname }}.key"
+ssl_certs_local_cert_path: "./files/ssl/{{ domainname }}.pem"
+
+
+ssl_certs_key_size: "2048"
+ssl_certs_generate_dh_param: false
+ssl_certs_dhparam_size: "2048"

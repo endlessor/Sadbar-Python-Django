@@ -1,0 +1,15 @@
+---
+- name: nginx | add Nginx stable repository (deb)
+  apt_repository: repo='deb http://nginx.org/packages/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release|lower }} nginx' state=present
+
+- name: nginx | add Nginx stable repository (deb-src)
+  apt_repository: repo='deb-src http://nginx.org/packages/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release|lower }} nginx' state=present
+
+- name: nginx | add Nginx.org key
+  apt_key: url=http://nginx.org/keys/nginx_signing.key state=present
+
+- name: nginx | run the equivalent of "apt-get update" as a separate step
+  apt: update_cache=yes
+
+- name: nginx | install Nginx with specific version
+  apt: name="nginx={{ version.nginx }}*"  update_cache=yes  state=present force=yes

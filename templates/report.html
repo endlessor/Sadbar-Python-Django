@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+{% block content %}
+<div class="container-flex event-report-title">
+    <div><a href="/{% if engagement.is_oauth %}oauth-{% endif %}engagements/edit/{{ engagement.id }}/">{{ engagement.name }}</a></div>
+</div>
+<div class="container-flex event-statistics">
+    <div>{{ statistics.1.1 }} Opened ({{ statistics.1.0 }} / {{ statistics.0 }})</div>
+    <div class="es-gap"></div>
+    <div>{{ statistics.2.1 }} Clicked ({{ statistics.2.0 }} / {{ statistics.0 }})</div>
+    <div class="es-gap"></div>
+    <div>{{ statistics.3.1 }} Submitted ({{ statistics.3.0 }} / {{ statistics.0 }})</div>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <td></td>
+            <td>
+                <select class="form-control" name="filter_target" id="filter_target">
+                    <option value="">All Targets</option>
+                {% for ft in filter_target %}
+                <option value="{{ ft }}" {% if ft == request.GET.filter_target %}selected="selected"{% endif %}>{{ ft }}</option>
+                {% endfor %}
+                </select>
+            </td>
+            <td></td>
+            <td></td>
+            <td colspan="2">
+                <select class="form-control" name="filter_status" id="filter_status">
+                    <option value="">All Event types</option>
+                {% for fs in filter_status %}
+                    <option value="{{ fs.0 }}" {% if fs.0|stringformat:"d" == request.GET.filter_status %}selected="selected"{% endif %}>{{ fs.1 }}</option>
+                {% endfor %}
+                </select>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <th>
+                TargetList
+                {% if 'nickname' in sorting and '-nickname' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-nickname' %}"></a>
+                {% elif '-nickname' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'nickname' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'nickname' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Email
+                {% if 'email' in sorting and '-email' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-email' %}"></a>
+                {% elif '-email' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'email' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'email' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Firstname
+                {% if 'firstname' in sorting and '-firstname' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-firstname' %}"></a>
+                {% elif '-firstname' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'firstname' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'firstname' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Lastname
+                {% if 'lastname' in sorting and '-lastname' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-lastname' %}"></a>
+                {% elif '-lastname' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'lastname' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'lastname' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Event type
+                {% if 'event_type' in sorting and '-event_type' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-event_type' %}"></a>
+                {% elif '-event_type' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'event_type' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'event_type' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Time
+                {% if 'timestamp' in sorting and '-timestamp' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-timestamp' %}"></a>
+                {% elif '-timestamp' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'timestamp' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'timestamp' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Useragent
+                {% if 'userAgent' in sorting and '-userAgent' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-userAgent' %}"></a>
+                {% elif '-userAgent' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'userAgent' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'userAgent' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                ip
+                {% if 'ip' in sorting and '-ip' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-ip' %}"></a>
+                {% elif '-ip' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'ip' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'ip' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Login
+                {% if 'login' in sorting and '-login' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-login' %}"></a>
+                {% elif '-login' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'login' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'login' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Password
+                {% if 'password' in sorting and '-password' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-password' %}"></a>
+                {% elif '-password' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'password' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'password' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Form Data
+                {% if 'raw_data' in sorting and '-raw_data' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-raw_data' %}"></a>
+                {% elif '-raw_data' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'raw_data' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'raw_data' %}"></a>
+                {% endif %}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for vector_email in objects %}
+        <tr>
+            <td>{{ vector_email.nickname }}</td>
+            <td>{{ vector_email.target__email }}</td>
+            <td>{{ vector_email.target__firstname }}</td>
+            <td>{{ vector_email.target__lastname }}</td>
+            <td>
+            {% ifequal vector_email.target__vector_email__result_event__event_type 1 %}Open{% endifequal %}
+            {% ifequal vector_email.target__vector_email__result_event__event_type 2 %}Click{% endifequal %}
+            {% ifequal vector_email.target__vector_email__result_event__event_type 3 %}Submit{% endifequal %}
+            </td>
+            <td>{{ vector_email.target__vector_email__result_event__timestamp }}</td>
+            <td>{{ vector_email.target__vector_email__result_event__userAgent }}</td>
+            <td>{{ vector_email.target__vector_email__result_event__ip }}</td>
+            <td>{{ vector_email.target__vector_email__result_event__login }}</td>
+            <td>{{ vector_email.target__vector_email__result_event__password }}</td>
+            <td>{{ vector_email.target__vector_email__result_event__raw_data }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% with order_by="order_by="|add:sorting %}
+    {% with filter_target="&filter_target="|add:ft %}
+        {% with filter_status="&filter_status="|add:fs %}
+        {% bootstrap_pagination page extra=order_by|add:filter_target|add:filter_status %}
+        {% endwith %}
+    {% endwith %}
+{% endwith %}
+{% endblock content %}

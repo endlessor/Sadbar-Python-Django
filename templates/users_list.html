@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+
+{% block content %}
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                Login
+                {% if 'username' in sorting and '-username' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-username' %}"></a>
+                {% elif '-username' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'username' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'username' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Email
+                {% if 'email' in sorting and '-email' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-email' %}"></a>
+                {% elif '-email' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'email' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'email' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                First name
+                {% if 'first_name' in sorting and '-first_name' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-first_name' %}"></a>
+                {% elif '-first_name' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'first_name' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'first_name' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Last name
+                {% if 'last_name' in sorting and '-last_name' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-last_name' %}"></a>
+                {% elif '-last_name' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'last_name' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'last_name' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Is active
+                {% if 'is_active' in sorting and '-is_active' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-is_active' %}"></a>
+                {% elif '-is_active' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'is_active' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'is_active' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for user in objects %}
+        <tr>
+            <td> {{ user.id }} </td>
+            <td> <a title="Edit" href="/users/edit/{{ user.id }}">{{ user.username }}</a></td>
+            <td> {{ user.email }} </td>
+            <td> {{ user.first_name }} </td>
+            <td> {{ user.last_name }} </td>
+            <td style="width: 50px; text-align: center;"> <span class='glyphicon glyphicon-{% if user.is_active %}ok{% else %}minus{% endif %}'></span> </td>
+            <td style="width: 50px; text-align: center;">
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/users/edit/{{ user.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('users', {{ user.id }})"></a>
+            </td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td colspan="6"> <a title="Add Client" href="/users/add/">Add User</a> </td>
+        </tr>
+    </tbody>
+</table>
+    
+{% with order_by="order_by="|add:sorting %}
+{% bootstrap_pagination page extra=order_by %}
+{% endwith %}
+{% endblock content %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+
+{% if engagements %}
+    {% include "preview_engagement_modal.html" %}
+    {% include "preview_oauth_engagement_modal.html" %}
+{% endif %}
+
+{% if campaign %}
+    <form id='campaign_edit' class='campaign_edit form-horizontal' action="/campaigns/edit/{{ campaign.id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='campaign_edit form-horizontal' action="/campaigns/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+        <fieldset id="campaign_for_client_{{ campaign.client }}" class="">
+            {% if campaign %}
+            <legend>Campaign for client <a href="/clients/edit/{{ campaign.client.id }}/">{{ campaign.client }}</a></legend>
+            {% else %}
+                <legend>New Campaign</legend>
+            {% endif %}
+            {% bootstrap_field form.campaign_id layout='horizontal' %}
+            {% bootstrap_field form.client layout='horizontal' %}
+            {% bootstrap_field form.name layout='horizontal' %}
+            {% bootstrap_field form.description layout='horizontal' %}
+        </fieldset>
+        {% if engagements %}
+        <fieldset id="current_engagements" class="">
+            <legend>Current engagements</legend>
+            <div class="col-md-12">
+                <table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+                    <tbody>
+                    {% for engagement in engagements %}
+                        <tr>
+                            <td style="vertical-align: middle; display: table-cell; width: 1px; white-space: nowrap;">
+                                <button data-engagement="{{ engagement.id }}" data-is-oauth="{{ engagement.is_oauth }}" id='start_stop_mail_send' type="button" title="Toggle delivery" class="btn engagement-control glyphicon glyphicon-{% if engagement.status.0 == 0 %}minus btn-light-blue{% elif engagement.status.0 == 1 %}refresh btn-light-green{% elif engagement.status.0 == 2 %}pause btn-grey{% elif engagement.status.0 == 3 %}remove btn-red{% elif engagement.status.0 == 4 %}ok btn-dark-green{% endif %}"></button>
+                                {% if engagement.status.0 == 3 %}
+                                    <span data-engagement="{{ engagement.id }}" class="campaigns-edit-status-text engagement-error-tag" title="{{ engagement.status.2.1 }}">Error {{ engagement.status.2.0}}</span>
+                                {% else %}
+                                    <span data-engagement="{{ engagement.id }}" class="campaigns-edit-status-text">
+                                    {% if engagement.status.0 == 0 %}
+                                        Not Launched
+                                    {% elif engagement.status.0 == 1 %}
+                                        In Progress
+                                    {% elif engagement.status.0 == 2 %}
+                                        Paused
+                                    {% elif engagement.status.0 == 4 %}
+                                        Completed
+                                    {% endif %}
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td style='vertical-align: middle;' data-id={{ engagement.id }}>
+                                <span class="badge">{{ engagement.status.1 }}</span>
+                                <a href="/{% if engagement.is_oauth %}oauth-{% endif %}engagements/edit/{{ engagement.id }}" onclick="saveStep('campaign', {{ campaign.id }})" title="View results">{{ engagement.name }}</a>
+                            </td>
+                            <td style="width: 200px;">
+                                <div class="result-statistics">
+                                    <span class="opened-stats"> % Opened ( / ) </span>
+                                    <br>
+                                    <span class="clicked-stats"> % Clicked ( / ) </span>
+                                    <br>
+                                    <span class="submitted-stats"> % Submitted ( / ) </span>
+                                </div>
+                            </td>
+                            <td style="width: 115px; vertical-align: middle;">
+                                <a href="/engagements/report/{{ engagement.id }}" title="View results" target="_blank" class="btn btn-success glyphicon glyphicon-list-alt"></a>
+                                <button type="button" title="Remove" data-id="{{ engagement.pk }}" data-url="engagements" class="remove_element btn btn-danger glyphicon glyphicon-remove"></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% if campaign %}
+                    <tr>
+                        <td colspan='6'>
+                            <a id='add_engagement' onclick="saveStep('campaign', {{ campaign.id }})" href="/engagements/add">Add new engagement</a>
+                            <a class="divider-vertical"></a>
+                            <a id='add_engagement' onclick="saveStep('campaign', {{ campaign.id }})" href="/oauth-engagements/add">Add new OAuth engagement</a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        {% elif campaign %}
+        <fieldset id="current_engagements" class="">
+            <legend>Current engagements</legend>
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <td>No engagements have been created for this campaign.</td>
+                        </tr>
+                        <tr>
+                            <td colspan='3'>
+                                <a id='add_engagement' onclick="saveStep('campaign', {{ campaign.id }})" href="/engagements/add">Add new engagement</a>
+                            </td>
+                            <td colspan='3'>
+                                <a id='add_engagement' onclick="saveStep('campaign', {{ campaign.id }})" href="/oauth-engagements/add">Add new OAuth engagement</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        {% endif %}
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    {% if campaign %}
+                    <a href="/campaigns/csv-report/{{ campaign.id }}/" target="_blank" class="btn btn-default btn-purple">Get CSV</a>
+                    <a href="/campaigns/xml-report/{{ campaign.id }}/" target="_blank" class="btn btn-default btn-purple">Get XML</a>
+                    {% endif %}
+                    <a href="/campaigns/list" class="btn btn-default" id="back-to-list">Back To List</a>
+                    {% if campaign %}
+                    <a href="/campaigns/delete/{{ campaign.id }}" class="btn btn-danger" id="del">Delete</a>
+                    {% endif %}
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </form>
+
+    {% if campaign %}
+        {% include "vector_emails_list.html" %}
+    {% endif %}
+
+{% endblock %}

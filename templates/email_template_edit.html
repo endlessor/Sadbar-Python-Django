@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if emailTemplate %}
+    <form id='campaign_edit' class='email_template_edit form-horizontal' action="/email-templates/edit/{{ emailTemplate.id }}/" method='POST'>
+{% elif request.POST.id %}
+    <form id='campaign_edit' class='email_template_edit form-horizontal' action="/email-templates/edit/{{ request.POST.id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='email_template_edit form-horizontal' action="/email-templates/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    <fieldset id="email_template" class="">
+        <legend>Email Template</legend>
+
+        {% bootstrap_field form.et_id layout='horizontal' %}
+        {% bootstrap_field form.name layout='horizontal' %}
+        {% bootstrap_field form.description layout='horizontal' %}
+        {% bootstrap_field form.from_header layout='horizontal' %}
+        {% bootstrap_field form.subject_header layout='horizontal' %}
+
+        <legend></legend>
+        <div class="col-md-6 col-md-offset-3">
+                <label for="helper_select">Pick a target list to see available Data Fields and verify valid usage</label>
+        </div>
+        <div class="col-md-3">
+            <a href="javascript:void(0)" class="btn btn-success" id="check_shortcodes" title="Check this template for incorrect shortcodes">Check shortcodes</a>
+        </div>
+        <div class="col-md-9 col-md-offset-3">
+            <div class="form-inline">
+                <select id="helper_select" class="form-control">
+                    <option value="">N/A</option>
+                    {% for key, val in target_lists.items %}
+                        <option value="{{ key }}">{{ val }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <span class="help-block">You can use [#[url]#], [#[firstname]#], [#[lastname]#], [#[email]#], [#[timezone]#] variables</span>
+            <span id="shortcode_errors"></span>
+        </div>
+        <legend></legend>
+
+        {% bootstrap_field form.template layout='horizontal' %}
+
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <a href="javascript:void(0)" class="btn btn-success" id="preview_email" title="Open a popup preview of this template">Preview</a>
+                    <a href="javascript:void(0)" class="btn btn-danger" id="decode-quo-pri" title="Convert all 'Quoted Printable'-encoded text into plaintext">Fix Encoding</a>
+                    <a href="/email-templates/list" class="btn btn-default" id="back-to-list" title="Return to the email templates list">Back To List</a>
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" title="Save template changes" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </fieldset>
+    </form>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+        <script>
+            CKEDITOR.replace('id_template', {
+                customConfig: '/static/ckeditor/ck-settings.js'
+            });
+            CKEDITOR.on('dialogDefinition', function(ev) {
+                var dialogName = ev.data.name;
+                var dialogDefinition = ev.data.definition;
+
+                if (dialogName == 'link') {
+                    var infoTab = dialogDefinition.getContents('info');
+                    var protocol = infoTab.get('protocol');
+                    protocol.default = '';
+                }
+            });
+        </script>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% load ordering %}
+
+{% block content %}
+    <legend>OAuth Results</legend>
+    <table class="table oauth-results-table">
+        <tr>
+            <th style='width: 50px'>
+                ID
+                {% if 'id' in sorting and '-id' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-id' %}"></a>
+                {% elif '-id' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'id' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'id' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Console
+            </th>
+            <th>
+                Authorized Email
+                {% if 'email' in sorting and '-email' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-email' %}"></a>
+                {% elif '-email' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'email' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'email' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Target
+                {% if 'target' in sorting and '-target' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-target' %}"></a>
+                {% elif '-target' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'target' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'target' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Engagement
+                {% if 'oauth_engagement' in sorting and '-oauth_engagement' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-oauth_engagement' %}"></a>
+                {% elif '-oauth_engagement' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'oauth_engagement' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'oauth_engagement' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+
+        {% for oauth_result in objects %}
+        <tr>
+            <td>
+                {{ oauth_result.id }}
+            </td>
+            <td>
+                <a class="glyphicon glyphicon-console" title="Open OAuth Console" href="/oauth-apis/google/all/api-console/{{ oauth_result.id }}" target="_blank"></a>
+            </td>
+            <td>
+                {{ oauth_result.email }}
+            </td>
+            <td>
+            {% if oauth_result.target %}
+                {{ oauth_result.target.email }}
+            {% else %}
+                (no target found)
+            {% endif %}
+            </td>
+            <td>
+            {% if oauth_result.oauth_engagement %}
+                <a title="Edit" href="/oauth-engagements/edit/{{ oauth_result.oauth_engagement.id }}">{{ oauth_result.oauth_engagement.name }}</a>
+            {% else %}
+                (no engagement found)
+            {% endif %}
+            </td>
+            <td style="width: 70px; text-align: center;">
+                <a class="glyphicon glyphicon-eye-open" title="View" href="/oauth-results/edit/{{ oauth_result.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntityWithoutRedirect('oauth-results', {{ oauth_result.id }})"></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if page %}
+    <table class="container-flex oauth-results-paginator">
+        <tr>
+            <td>
+            {% with order_by="order_by="|add:sorting %}
+                {% bootstrap_pagination page extra=order_by|add:pg_size %}
+            {% endwith %}
+            </td>
+            <td>
+                <select class="form-control" name="pg_size" id="pg_size">
+                    <option value="-1">Select page size</option>
+                    <option value="25" {% if "25" == request.GET.pg_size %}selected="selected"{% endif %}>Show 25</option>
+                    <option value="50" {% if "50" == request.GET.pg_size %}selected="selected"{% endif %}>Show 50</option>
+                    <option value="100" {% if "100" == request.GET.pg_size %}selected="selected"{% endif %}>Show 100</option>
+                    <option value="500" {% if "500" == request.GET.pg_size %}selected="selected"{% endif %}>Show 500</option>
+                    <option value="2000" {% if "2000" == request.GET.pg_size %}selected="selected"{% endif %}>Show 2000</option>
+                    <option value="999999" {% if "999999" == request.GET.pg_size %}selected="selected"{% endif %}>Show 999999</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    {% else %}
+    <div>
+        <p>No results were retrieved.</p>
+    </div>
+    {% endif %}
+{% endblock content %}

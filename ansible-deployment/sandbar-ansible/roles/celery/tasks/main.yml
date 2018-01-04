@@ -1,0 +1,38 @@
+---
+- name: celeryd | install celeryd with specific version
+  apt: name="celeryd={{ version.celeryd }}*"  update_cache=yes  state=present force=yes
+
+- name: celerybeat | Applying configuration
+  template: >
+    src=celerybeat.conf
+    dest=/etc/default/celerybeat
+    backup=yes
+    mode=644
+
+- name: celeryd | Applying configuration
+  template: >
+    src=celeryd.conf
+    dest=/etc/default/celeryd
+    backup=yes
+    mode=644
+
+- name: celery | Set permissions on {{project.root}}
+  file:
+    path={{project.root}}
+    owner={{project.user}}
+    group={{project.group}}
+    recurse=yes
+    mode=0774
+
+- name: celery | Create {{celeryd_user}} User
+  user:
+    name: "{{celeryd_user}}"
+    group: "{{project.group}}"
+    home: "{{project.root}}"
+    
+- name: celery | restart celeryd
+  service: name=celeryd state=restarted enabled=yes
+
+
+- name: restart celerybeat
+  service: name=celerybeat state=restarted enabled=yes

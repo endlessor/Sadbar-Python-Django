@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block extcss %}
+<link rel="stylesheet" href="{% static 'css/ui-grid.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/csv_styles.css' %}">
+<link rel="stylesheet" href="{% static 'css/select.css' %}">
+<link rel="stylesheet" href="{% static 'css/selectize.default.css' %}">
+{% endblock extcss %}
+
+{% block extjs %}
+<script src="{% static 'js/angular.min.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'js/ui-grid.min.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'js/lodash.min.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'js/ui-bootstrap-tpls.min.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'js/papaparse.min.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'js/screenfull.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'js/screenfull.min.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'js/select.js' %}"></script>
+<script src="{% static 'js/csv_parser.js' %}"></script>
+{% endblock extjs %}
+
+{% block content %}
+<div class="row" ng-app="app">
+   <div class="col-xs-12" ng-controller="CsvParseCtrl">
+      <form class="target-list-form" name="csvForm" novalidate>
+      <div ngsf-fullscreen>
+         <div class="panel panel-default panel-block">
+            <div class="panel-heading">
+               <h4 ng-show="type.CREATE">Create New List(s)</h4>
+               <h4 ng-show="type.EXTEND">Extending List {{ tl.nickname }}</h4>
+               <h4 ng-show="type.MODIFY">Modify List {{ tl.nickname }}</h4>
+            </div>
+            <div class="panel-body panel-default">
+               <div class="row" ng-hide="gOpts.data.length > 0 || type.MODIFY">
+                  <div class="col-xs-6">
+                     <div class="inline-block">
+                        <input type="file" id="csv">
+                     </div>
+                     <div class="inline-block">
+                        <button  class="btn btn-success" ng-click="parse()">
+                           Parse csv
+                        </button>
+                     </div>
+                  </div>
+               </div>
+               <div class="row" ng-show="type.CREATE || type.EXTEND || type.MODIFY">
+                  <div class="col-xs-6">
+                     <div class="form-group">
+                        <label class="col-md-2 control-label" for="description">Description</label>
+                        <div class="col-md-10">
+                           <textarea name="description" id="description" class="form-control" maxlength="100" ng-model="description">{{ tl.description }}</textarea>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-xs-6">
+                     <div class="form-group">
+                        <label class="col-md-2 control-label" for="listName">List name</label>
+                        <div class="col-md-10">
+                           <input id="listName" type="text" class="form-control" name="listName" ng-model="listName" required>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-xs-6">
+                     <div class="form-group">
+                        <label class="col-md-2 control-label" for="id_client">Client</label>
+                        <div class="col-md-10">
+                           <select class="form-control" id="id_client" name="client" ng-model="client" required="required">
+                              <option ng-selected="!client" value="">---------</option>
+                              {% for client in clients %}
+                              <option ng-selected="client == {{ client.id }}" value="{{ client.id }}">{{ client.name }}</option>
+                              {% endfor %}
+                           </select>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-xs-6">
+                     <div class="col-sm-6">
+                        <div class="form-group">
+                           <button class="btn btn-primary" ngsf-toggle-fullscreen>Toggle fullscreen</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-xs-12">
+                     <button type="button" class="btn btn-success" ng-click="addColumnModal()">
+                        <i class="fa fa-plus"></i>
+                        Add Column
+                     </button>
+                     <button class="btn btn-success" ng-click="addRow()">
+                        <i class="fa fa-plus"></i>
+                        Add Row
+                     </button>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-xs-12">
+                     <div ng-if="!refresh" ui-grid-edit ui-grid-resize-columns ui-grid-grouping ui-grid-cellnav ui-grid="gOpts"
+                          class="gridStyle">
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-xs-4 col-xs-offset-8">
+                     <button class="btn btn-primary" type="button" ng-click="save(false, csvForm)">
+                        Save
+                     </button>
+                     <button class="btn btn-warning" type="button" ng-click="save(true, csvForm)">
+                        Split All and Save
+                     </button>
+                     <a href="/targets-list/list" class="btn btn-default" id="back-to-list">Back To List</a>
+                     <br><br>
+                     <label>
+                        Split All?
+                        <input type="checkbox" ng-model="splitAllControl">
+                     </label>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      </form>
+   </div>
+</div>
+<script type="text/javascript">
+   var type = '{{ type }}';
+   {%if target_list %}
+   {% autoescape off %}
+   var targetList = {{ target_list }}
+   {% endautoescape %}
+   {% endif %}
+</script>
+{% endblock content %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+
+{% block content %}
+<table border="0" id="email_servers_table" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                Login
+                {% if 'login' in sorting and '-login' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-login' %}"></a>
+                {% elif '-login' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'login' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'login' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Host
+                {% if 'host' in sorting and '-host' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-host' %}"></a>
+                {% elif '-host' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'host' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'host' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for email_server in objects %}
+        <tr>
+            <td> {{ email_server.id }} </td>
+            <td> <a title="Edit" href="/email-servers/edit/{{ email_server.id }}">{{ email_server.login }}</a> </td>
+            <td> {{ email_server.host }} </td>
+            <td style="width: 70px; text-align: center;">
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/email-servers/edit/{{ email_server.id }}/"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('email-servers', {{ email_server.id }})"></a>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="6"> <a title="Add Email Server" href="/email-servers/add/">Add Email Server</a> </td>
+        </tr>
+    </tbody>
+</table>
+{% with order_by="order_by="|add:sorting %}
+{% bootstrap_pagination page extra=order_by %}
+{% endwith %}
+{% endblock content %}

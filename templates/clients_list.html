@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+
+{% block content %}
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                Name
+                {% if 'name' in sorting and '-name' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-name' %}"></a>
+                {% elif '-name' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'name' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'name' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                URL
+                {% if 'url' in sorting and '-url' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-url' %}"></a>
+                {% elif '-url' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'url' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'url' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Default Timezone
+                {% if 'default_timezone' in sorting and '-default_timezone' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-default_timezone' %}"></a>
+                {% elif '-default_timezone' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'default_timezone' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'default_timezone' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for client in objects %}
+        <tr>
+            <td> {{ client.id }} </td>
+            <td> <a title="Edit" href="/clients/edit/{{ client.id }}">{{ client.name }}</a></td>
+            <td> {{ client.url }} </td>
+            <td> {{ client.get_default_time_zone_display }} </td>
+            <td style="width: 50px; text-align: center;">
+                <a class="glyphicon glyphicon-save-file" title="XML Report" href="/clients/xml-report/{{ client.id }}"></a>
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/clients/edit/{{ client.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('clients', {{ client.id }})"></a>
+            </td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td colspan="5"> <a title="Add Client" href="/clients/add/">Add Client</a> </td>
+        </tr>
+    </tbody>
+</table>
+    
+{% with order_by="order_by="|add:sorting %}
+{% bootstrap_pagination page extra=order_by %}
+{% endwith %}
+{% endblock content %}
+
+

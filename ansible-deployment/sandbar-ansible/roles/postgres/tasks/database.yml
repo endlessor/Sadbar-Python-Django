@@ -1,0 +1,77 @@
+---
+- name: postgres | Create "{{project.user}}" User
+  user:
+    name: "{{project.user}}"
+    group: "{{project.group}}"
+    home: "{{project.root}}"
+
+- name: postgres | Create "{{database.user}}" 
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: "{{database.user}}"
+    password: "{{database.password}}"
+        
+- name: postgres | Create Database "{{database.name}}"
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: "{{database.name}}"
+    state: present
+    owner: "{{database.user}}" 
+
+- name: postgres | Ensure user has access to the database 
+  become: true
+  become_user: postgres 
+  postgresql_user: 
+    db: "{{database.name}}" 
+    name: "{{database.user}}" 
+    password: "{{database.password}}"
+    priv: ALL 
+    state: present 
+
+- name:  postgres | Grant usage of schema
+  become: true
+  become_user: postgres 
+  postgresql_privs: 
+    database: "{{database.name}}" 
+    state: present 
+    privs: ALL 
+    type: schema 
+    roles: "{{database.user}}" 
+    objs: public
+    
+- name: postgres | Grant table permissions
+  become: true
+  become_user: postgres 
+  postgresql_privs: 
+    database: "{{database.name}}" 
+    schema: public 
+    state: present 
+    privs: ALL 
+    type: table 
+    roles: "{{database.user}}" 
+    grant_option: no 
+    objs: ALL_IN_SCHEMA
+    
+- name: Grant sequence permissions
+  become: true
+  become_user: postgres 
+  postgresql_privs: 
+    database: "{{database.name}}"  
+    schema: public 
+    state: present 
+    privs: ALL 
+    type: sequence 
+    roles: "{{database.user}}" 
+    grant_option: no 
+    objs: ALL_IN_SCHEMA    
+
+- name: Ensure user does not have unnecessary privileges 
+  become: true
+  become_user: postgres 
+  postgresql_user: 
+    name: "{{database.user}}" 
+    role_attr_flags: NOSUPERUSER,NOCREATEDB 
+    state: present    
+

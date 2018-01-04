@@ -1,0 +1,10 @@
+<!-- template reference: http://brianhann.com/ui-grid-and-dropdowns/ -->
+<ui-select-wrap>
+  <!-- onkeypress attribute reference: http://stackoverflow.com/a/28897711 -->
+  <ui-select ng-model="MODEL_COL_FIELD" onkeypress="return false;" theme="selectize" ng-disabled="disabled" append-to-body="true">
+    <ui-select-match placeholder="(use client)">{{ COL_FIELD }}</ui-select-match>
+    <ui-select-choices repeat="item in col.colDef.editDropdownOptionsArray | filter: $select.search">
+      <span>{{ item }}</span>
+    </ui-select-choices>
+  </ui-select>
+</ui-select-wrap>

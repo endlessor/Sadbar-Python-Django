@@ -1,0 +1,5 @@
+---
+- name: nginx | Create log directory
+  file: >
+    dest={{project.root}}/logs/
+    state=directory

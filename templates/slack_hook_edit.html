@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if slack_hook %}
+    <form id='campaign_edit' class='slack_hook_edit form-horizontal' action="/slack-hooks/edit/{{ slack_hook.id }}/" method='POST'>
+{% elif request.POST.id %}
+    <form id='campaign_edit' class='slack_hook_edit form-horizontal' action="/slack-hooks/edit/{{ request.POST.id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='slack_hook_edit form-horizontal' action="/slack-hooks/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    <fieldset id="slack_hook" class="">
+        <legend>Slack Hook</legend>
+        {% bootstrap_field form.sh_id layout='horizontal' %}
+        {% bootstrap_field form.webhook_url layout='horizontal' %}
+        {% bootstrap_field form.description layout='horizontal' %}
+        <div class="clearer"></div>
+        <div class="form-group">
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <div class="submit_block">
+                    <a href="/slack-hooks/list" class="btn btn-default" id="back-to-list" title="Return to the Slack Hooks list">Back To List</a>
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" title="Save Slack Hook changes" />
+                </div>
+            </div>
+        </div>
+        <div class="clearer"></div>
+    </fieldset>
+    </form>
+{% endblock %}

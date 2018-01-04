@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+
+{% block content %}
+
+{% if objects %}
+    {% include "preview_engagement_modal.html" %}
+    {% include "preview_oauth_engagement_modal.html" %}
+{% endif %}
+
+<div class="form-group">
+    <div class="col-md-4">
+        <select class="form-control" id='filter_client'>
+            <option value="-1">Choose a Client</option>
+            {% for cl in clients %}
+            <option {% ifequal cl.id|slugify request.GET.client %} selected=selected {% endifequal %}value="{{ cl.id }}">{{ cl.name }}</option>
+            {% endfor %}
+        </select>
+    </div> <div class="col-md-8"> </div>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                State
+                {% if 'state' in sorting and '-state' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-state' %}"></a>
+                {% elif '-state' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'state' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'state' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Title
+                {% if 'name' in sorting and '-name' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-name' %}"></a>
+                {% elif '-name' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'name' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'name' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Description
+                {% if 'description' in sorting and '-description' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-description' %}"></a>
+                {% elif '-description' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'description' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'description' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Campaign
+                {% if 'campaign' in sorting and '-campaign' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-campaign' %}"></a>
+                {% elif '-campaign' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'campaign' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'campaign' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Template
+                {% if 'template' in sorting and '-template' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-template' %}"></a>
+                {% elif '-template' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'template' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'template' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Landing Page
+                {% if 'landing_page' in sorting and '-landing_page' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-landing_page' %}"></a>
+                {% elif '-landing_page' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'landing_page' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'landing_page' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Target Lists
+                {% if 'target_lists' in sorting and '-target_lists' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-target_lists' %}"></a>
+                {% elif '-target_lists' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'target_lists' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'target_lists' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Results
+                {% if 'results' in sorting and '-results' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-results' %}"></a>
+                {% elif '-results' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'results' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'results' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody id="engagements_list">
+    {% for engagement in objects %}
+        <tr data-id="{{ engagement.id }}">
+            <td> {{ engagement.id }} </td>
+            <td>
+                <form id='engagements_list_status_{{ engagement.id }}' class='engagements-list-status form-horizontal' style="display: table-cell; width: 1px; white-space: nowrap;" action="/{% if engagement.is_oauth %}oauth-{% endif %}engagements/edit/{{ engagement.id }}/" method='POST'>
+                    {% csrf_token %}
+                    <button data-engagement="{{ engagement.id }}" data-is-oauth="{{ engagement.is_oauth }}" id="start_stop_mail_send" type="button" title="Toggle delivery" class="btn btn-xs engagement-control glyphicon glyphicon-{% if engagement.status.0 == 0 %}minus btn-light-blue{% elif engagement.status.0 == 1 %}refresh btn-light-green{% elif engagement.status.0 == 2 %}pause btn-grey{% elif engagement.status.0 == 3 %}remove btn-red{% elif engagement.status.0 == 4 %}ok btn-dark-green{% endif %}"></button>
+                        {% if engagement.status.0 == 3 %}
+                            <span data-engagement="{{ engagement.id }}" class="engagements-list-status-text engagement-error-tag" title="{{ engagement.status.2.1 }}">Error {{ engagement.status.2.0}}</span>
+                        {% else %}
+                            <span data-engagement="{{ engagement.id }}" class="engagements-list-status-text">
+                                {% if engagement.status.0 == 0 %}
+                                    Not Launched
+                                {% elif engagement.status.0 == 1 %}
+                                    In Progress
+                                {% elif engagement.status.0 == 2 %}
+                                    Paused
+                                {% elif engagement.status.0 == 4 %}
+                                    Completed
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                </form>
+            </td>
+            <td> <a title="Edit" href="/{% if engagement.is_oauth %}oauth-{% endif %}engagements/edit/{{ engagement.id }}">{{ engagement.name }}</a></td>
+            <td> {{ engagement.description }} </td>
+            <td> <a href="/campaigns/edit/{{ engagement.campaign.id }}/">{{ engagement.campaign }}</a> </td>
+            <td> <a href="/email-templates/edit/{{ engagement.email_template.id }}/">{{ engagement.email_template }}</a> </td>
+            <td> <a href="/landing-pages/edit/{{ engagement.landing_page.id }}/">{{ engagement.landing_page }}</a> </td>
+            <td>
+                {% for each_list in engagement.target_lists.all %}
+                    <li><a href="/targets-list/edit/{{ each_list.id }}/">{{ each_list }}</a></li>
+                {% endfor %}
+            </td>
+            <td style="width: 200px;">
+                <div class="result-statistics">
+                    <span class="opened-stats"> % Opened ( / ) </span>
+                    <br>
+                    <span class="clicked-stats"> % Clicked ( / ) </span>
+                    <br>
+                    <span class="submitted-stats"> % Submitted ( / ) </span>
+                </div>
+            </td>
+            <td style="width: 70px; text-align: center;">
+                <a class="glyphicon glyphicon-download-alt" title="CSV Report" href="/engagements/csv-report/{{ engagement.id }}"></a>
+                <a class="glyphicon glyphicon-save-file" title="XML Report" href="/engagements/xml-report/{{ engagement.id }}"></a>
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/{% if engagement.is_oauth %}oauth-{% endif %}engagements/edit/{{ engagement.id }}"></a>
+                <a class="glyphicon glyphicon-list-alt" title="Report" target="_blank" href="/engagements/report/{{ engagement.id }}"></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('engagements', {{ engagement.id }})"></a>
+            </td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td colspan="6">
+                <a title="Add Engagement" href="/engagements/add/">Add Engagement</a>
+                <a class="divider-vertical"></a>
+                <a title="Add OAuth Engagement" href="/oauth-engagements/add/">Add OAuth Engagement</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% with order_by="order_by="|add:sorting %}
+    {% with client="&client="|add:client %}
+    {% bootstrap_pagination page extra=order_by|add:client %}
+    {% endwith %}
+{% endwith %}
+{% endblock content %}

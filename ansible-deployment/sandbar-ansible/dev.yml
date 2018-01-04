@@ -1,0 +1,45 @@
+---
+- name: Developer Patch Sandbar
+  hosts: local
+  become: true
+  become_user: root
+
+  vars:
+    project_repo: git@bitbucket.org:xander-sereda/sandbar.git
+    project_doc_root: /tmp/project
+    #version: What version of the repository to check out. This can be the the literal string HEAD, a branch name, a tag name.         #It can also be a SHA-1 hash, in which case refspec needs to be specified if the given revision is not already available.
+    project_version: ansible
+    
+  tasks:
+
+  - name: Pull repo {{project_repo}} branch {{project_version}}
+    git: repo={{project_repo}} dest={{project_doc_root}} version={{project_version}} accept_hostkey=yes force=yes
+ 
+  - name: Remove /etc/ansible, backup config.yml, backup ansible.cfg, recreate /etc/ansible and restore config.yml and ansible.cfg
+    raw: mv -f /etc/ansible/ansible.cfg /tmp/ansible.cfg && mv -f /etc/ansible/group_vars/config.yml /tmp/config.yml && rm -rf /etc/ansible && mkdir -p /etc/ansible/group_vars && mv /tmp/ansible.cfg /etc/ansible/ansible.cfg && mv /tmp/config.yml /etc/ansible/group_vars/config.yml
+ 
+  - name: Ensure /etc/ansible/files dir exists
+    file: path=/etc/ansible/files state=directory
+
+  - name: Zip up ansible source into /tmp/sandbar-ansible-{{project_version}}.zip
+    raw: (cd {{ project_doc_root }}/ansible-deployment/sandbar-ansible/; zip -r /tmp/sandbar-ansible-{{project_version}}.zip .)
+    
+  - name: Remove ansible playbooks from {{ project_doc_root }} to prevent it from being added to sandbar-source.zip
+    raw: rm -rf {{ project_doc_root }}/ansible-deployment
+      
+  - name: Zip up Sandbar project into /etc/ansible/files/sandbar-source.zip
+    raw: (cd {{ project_doc_root }}; zip -r /etc/ansible/files/sandbar-source.zip .)
+    
+  - name: Extract /tmp/sandbar-ansible-{{project_version}}.zip to /etc/ansible
+    raw: unzip -o -q /tmp/sandbar-ansible-{{project_version}}.zip -d /etc/ansible
+    
+  - name: Move /tmp/sandbar-ansible-{{project_version}}.zip to /etc/ansible/files
+    raw: mv /tmp/sandbar-ansible-{{project_version}}.zip /etc/ansible/files/sandbar-ansible.zip
+  
+  - name: Cleanup existing /tmp/project folder
+    file: path="{{ project_doc_root }}" state=absent
+  
+  - name: Cleanup existing zip files in /tmp
+    raw: rm -f /tmp/*.zip
+
+  

@@ -1,0 +1,17 @@
+---
+- name: Update | Ensure "{{project.root}}" exists
+  file: path="{{project.root}}" state=directory
+    
+- name: Update | Unarchive sandbar application
+  unarchive:
+    src=files/sandbar-source.zip
+    dest={{project.root}}
+    copy=yes
+    
+- name: Update | configure permissions on {{project.root}}
+  file: 
+    path={{project.root}}
+    owner={{project.user}}
+    group={{project.group}}
+    recurse=yes
+    mode=0774

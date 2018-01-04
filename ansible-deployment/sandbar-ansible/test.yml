@@ -1,0 +1,11 @@
+---
+- name: Validate Ansible Connectivity
+  hosts: local
+  become: true
+  become_user: root
+  tasks:
+    - name: Test 1
+      raw: hostname
+
+    - name: Test 2
+      raw: df -h

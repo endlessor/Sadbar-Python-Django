@@ -1,0 +1,20 @@
+---
+- name: node | run the equivalent of "apt-get update" as a separate step
+  apt: update_cache=yes
+  
+- name: node | install node with specific version
+  apt: name="nodejs={{ version.node }}*"  update_cache=yes  state=present force=yes
+  
+- name: node | install node with specific version
+  apt: name="npm={{ version.npm }}*"  update_cache=yes  state=present force=yes
+
+- name: node | create sym link for node to nodejs
+  raw: sudo ln -s "$(which nodejs)" /usr/bin/node
+  ignore_errors: yes
+
+- name: node | install phantomjs-prebuilt with specific version
+  npm: name=phantomjs-prebuilt version="{{ version.phantomjs }}" path={{ project.root }}
+  become: true
+  become_user: "{{ project.user }}"
+  become_method: su
+  

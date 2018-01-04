@@ -1,0 +1,26 @@
+---
+- name: Nginx | remove default nginx site
+  file: >
+    path=/etc/nginx/conf.d/default.conf
+    state=absent
+
+- name: Nginx | Install nginx vhost configuration file.
+  template: >
+    src=vhost.conf
+    dest=/etc/nginx/conf.d/{{project.name}}.conf
+  tags:
+    - configuration
+    - nginx
+    - webserver
+    - update
+  
+- name: Nginx | Install nginx configuration file.
+  template: >
+    src=nginx.conf
+    dest=/etc/nginx/nginx.conf
+  tags:
+    - configuration
+    - nginx
+    - webserver
+    - update
+

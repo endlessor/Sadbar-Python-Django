@@ -1,0 +1,7 @@
+---
+- name: django | install unzip
+  apt: name=unzip  update_cache=yes  state=present force=yes
+  
+- include: common.yml
+- include: packages.yml
+- include: pip.yml

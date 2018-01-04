@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if client %}
+    <form id='campaign_edit' class='client_edit form-horizontal' action="/clients/edit/{{ client.id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='client_edit form-horizontal' action="/clients/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+    <fieldset id="client_{{ client.name }}" class="">
+        <legend>Client {{ client.name }}</legend>
+
+        {% bootstrap_field form.name layout='horizontal' %}
+        {% bootstrap_field form.url layout='horizontal' %}
+        {% bootstrap_field form.default_time_zone layout='horizontal' %}
+
+        {% if campaigns %}
+        <fieldset id="current_clients" class="">
+            <legend>Current Campaigns</legend>
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+                    <tbody>
+                    {% for campaign in campaigns %}
+                        <tr>
+                            <td style="width: 50px">
+                                <button type="button" data-campaign="{{ campaign.id }}" data-action="{{ campaign.status.0 }}" title="Resume delivery" class="btn btn-success glyphicon glyphicon-{% if campaign.status.0 %}pause{% else %}play{% endif %}"></button>
+                            </td>
+                            <td style='vertical-align: middle;'><span class="badge">{{ campaign.status.1 }}</span> <a href="/campaigns/edit/{{ campaign.id }}" onclick="saveStep('client', {{ client.id }})"> {{ campaign.name }}</a></td>
+                            <td style="width: 50px">
+                                <button data-id="{{ campaign.pk }}" data-url="campaigns" type="button" title="Remove" class="remove_element btn btn-danger glyphicon glyphicon-remove"></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% if client %}
+                    <tr>
+                        <td colspan='3'><a href="/campaigns/add" onclick="saveStep('client', {{ client.id }})">Add new Campaign</a></td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        {% elif client %}
+        <fieldset id="current_clients" class="">
+            <legend>Current Campaigns</legend>
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <td>No campaigns have been created for this client.</td>
+                        </tr>
+                        <tr>
+                            <td colspan='3'><a href="/campaigns/add" onclick="saveStep('client', {{ client.id }})">Add new Campaign</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        {% endif %}
+
+        {% if targetLists %}
+        <fieldset id="target_listst" class="">
+            <legend>Target Lists</legend>
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+                    <tbody>
+                    {% for lst in targetLists %}
+                        <tr>
+                            <td style='vertical-align: middle;'>{{ lst.nickname }}</td>
+                            <td style='width: 50px'> <a class="glyphicon glyphicon-pencil" title="Edit" target="_blank" href="/targets-list/edit/{{ lst.id }}"></a> </td>
+                        </tr>
+                    {% endfor %}
+                        <tr>
+                            {% comment %}
+                            Don't add the saveStep onclick to anchors when it isn't supported by the linked page. It can confuse the step order for other links, since it uses a stack.
+                            {% endcomment %}
+                            <td colspan='3'><a href="/targets-list/add/">Add new Target List</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        {% elif client %}
+        <fieldset id="target_listst" class="">
+            <legend>Target Lists</legend>
+            <div class="col-md-3"></div> <div class="col-md-9">
+                <table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <td>No target lists have been created for this client.</td>
+                        </tr>
+                        <tr>
+                            {% comment %}
+                            Don't add the saveStep onclick to anchors when it isn't supported by the linked page. It can confuse the step order for other links, since it uses a stack.
+                            {% endcomment %}
+                            <td colspan='3'><a href="/targets-list/add/">Add new Target List</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        {% endif %}
+
+        <div class="form-group">
+            <div class="col-md-1"></div> <div class="col-md-11">
+                <div class="submit_block">
+                    {% if client %}
+                    <a href="/clients/xml-report/{{ client.id }}/" target="_blank" class="btn btn-default btn-purple">Get XML</a>
+                    {% endif %}
+                    <a href="/clients/list" class="btn btn-default" id="back-to-list" value="Back To List">Back To List</a>
+                    {% if client %}
+                    <a href="/clients/delete/{{ client.id }}" class="btn btn-danger" id="del">Delete</a>
+                    {% endif %}
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" />
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    </form>
+
+    {% if client %}
+        {% include "vector_emails_list.html" %}
+    {% endif %}
+
+{% endblock %}

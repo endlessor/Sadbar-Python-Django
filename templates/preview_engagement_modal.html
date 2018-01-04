@@ -1,0 +1,188 @@
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+<form id="preview_engagement_modal" class="modal multi-step" data-modal-preview-only="false">
+    <div class="modal-dialog" style="width: auto; height: auto;">
+        <div class="modal-content" style="width: auto; height: auto;">
+            <div class="modal-header">
+                <button type="button" class="glyphicon glyphicon-remove btn btn-grey-no-bg" data-dismiss="modal" onclick="sendEvent('#preview_engagement_modal', 1)" style="float: right;"></button>
+                <h4 class="modal-title"><span class="preview-data-engagement-name">AJAX FAILED</span> Preview</h4>
+            </div>
+            <div class="modal-body step-1" data-step="1" style="width: auto; height: inherit;">
+                <table class="table table-bordered" style="margin: 0;">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="preview-step preview-step-current">
+                                <span class="preview-step-indicator">?</span>
+                                Vector Emails
+                            </td>
+                            <td colspan="1" class="preview-step preview-step-incomplete">
+                                <span class="preview-step-indicator">?</span>
+                                Landing Page
+                            </td>
+                            <td colspan="1" class="preview-step preview-step-incomplete">
+                                <span class="preview-step-indicator">?</span>
+                                Redirect Page
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">From: <span id="email_preview_from_email" class="preview-data-from-email" style="font-weight: bold;">AJAX FAILED</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">Subject: <span id="email_preview_subject" class="preview-data-subject" style="font-weight: bold;">AJAX FAILED</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">On schedule <span id="email_preview_schedule_name" class="preview-data-engagement-schedule-name" style="font-weight: bold;">AJAX FAILED</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">This email is sending at <span id="email_preview_send_at" class="preview-data-first-ve-send-at" style="font-weight: bold;">AJAX FAILED</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">Target Lists: <span id="email_preview_target_list_names" class="preview-data-target-list-names" style="font-weight: bold;">AJAX FAILED</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><span id="email_preview_shortcodes_are_subset" class="preview-data-shortcodes-are-subset">------</span></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">
+                                <div style="display: inline-block; float: left;">
+                                    <icon class="btn engagement-preview-previous-target glyphicon glyphicon-arrow-left" data-engagement="-1" data-target="-1" title="View previous target's email"></icon>
+                                </div>
+                                <div style="display: inline-block; text-align: center;">
+                                    Target #<span id="email_preview_target_index" data-previous-targets="0" style="font-weight: bold;">1</span> / <span id="email_preview_total_target_count" class="preview-data-total-target-count" style="font-weight: bold;">AJAX FAILED</span> - <span id="email_preview_target_email" class="preview-data-first-ve-target-email" style="font-weight: bold;">AJAX FAILED</span>, part of target list <span id="email_preview_target_target_list" class="preview-data-first-ve-target-list" style="font-weight: bold;">AJAX FAILED</span>
+                                </div>
+                                <div style="display: inline-block; float: right;">
+                                    <icon class="btn engagement-preview-next-target glyphicon glyphicon-arrow-right" data-engagement="-1" data-target="-1" title="View next target's email"></icon>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="iframe-wrap">
+                    <div class="invisible-overlay"></div>
+                    <iframe class="preview-iframe" id="engagement-preview-email-template-iframe" src="about:blank" sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts"></iframe>
+                </div>
+
+            </div>
+            <div class="modal-body step-2" data-step="2">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="preview-step preview-step-complete" onclick="sendEvent('#preview_engagement_modal', 1)">
+                                <icon class="glyphicon glyphicon-ok preview-step-indicator"></icon>
+                                Vector Emails
+                            </td>
+                            <td colspan="1" class="preview-step preview-step-current">
+                                <span class="preview-step-indicator">?</span>
+                                Landing Page
+                            </td>
+                            <td colspan="1" class="preview-step preview-step-incomplete">
+                                <span class="preview-step-indicator">?</span>
+                                Redirect Page
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">
+                                <span id="email_preview_landing_page_type" class="preview-data-first-ve-landing-page-type" style="font-weight: bold;">AJAX FAILED</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Landing Page: <span id="email_preview_landing_page_name" class="preview-data-first-ve-landing-page-name" style="font-weight: bold;">AJAX FAILED</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Source URL: <span id="email_preview_landing_page_url" class="preview-data-first-ve-landing-page-url" style="font-weight: bold;">AJAX FAILED</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="iframe-wrap">
+                    <div class="invisible-overlay"></div>
+                    <iframe class="preview-iframe" id="engagement-preview-landing-page-iframe" src="about:blank" sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts"></iframe>
+                 </div>
+
+            </div>
+            <div class="modal-body step-3" data-step="3">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="preview-step preview-step-complete" onclick="sendEvent('#preview_engagement_modal', 1)">
+                                <icon class="glyphicon glyphicon-ok preview-step-indicator"></icon>
+                                Vector Emails
+                            </td>
+                            <td colspan="1" class="preview-step preview-step-complete" onclick="sendEvent('#preview_engagement_modal', 2)">
+                                <icon class="glyphicon glyphicon-ok preview-step-indicator"></icon>
+                                Landing Page
+                            </td>
+                            <td colspan="1" class="preview-step preview-step-current">
+                                <span class="preview-step-indicator">?</span>
+                                Redirect Page
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">
+                                <span id="email_preview_redirect_page_type" class="preview-data-first-ve-redirect-page-type" style="font-weight: bold;">AJAX FAILED</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Redirect Page: <span id="email_preview_redirect_page_name" class="preview-data-first-ve-redirect-page-name" style="font-weight: bold;">AJAX FAILED</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Source URL: <span id="email_preview_redirect_page_url" class="preview-data-first-ve-redirect-page-url" style="font-weight: bold;">AJAX FAILED</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                    <div class="iframe-wrap">
+                        <div class="invisible-overlay"></div>
+                        <iframe class="preview-iframe" id="engagement-preview-redirect-page-iframe" src="about:blank" sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts"></iframe>
+                    </div>
+
+            </div>
+            <div class="modal-body step-4" data-step="4">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="preview-step preview-step-complete" onclick="sendEvent('#preview_engagement_modal', 1)">
+                                <icon class="glyphicon glyphicon-ok preview-step-indicator"></icon>
+                                Vector Emails
+                            </td>
+                            <td colspan="1" class="preview-step preview-step-complete" onclick="sendEvent('#preview_engagement_modal', 2)">
+                                <icon class="glyphicon glyphicon-ok preview-step-indicator"></icon>
+                                Landing Page
+                            </td>
+                            <td colspan="1" class="preview-step preview-step-complete" onclick="sendEvent('#preview_engagement_modal', 3)">
+                                <icon class="glyphicon glyphicon-ok preview-step-indicator"></icon>
+                                Redirect Page
+                            </td>
+                        </tr>
+                        <tr>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default step step-1 step-2 step-3" data-dismiss="modal" onclick="sendEvent('#preview_engagement_modal', 1)">Cancel</button>
+                <button type="button" class="btn btn-default step step-4" data-dismiss="modal" data-step="4" onclick="sendEvent('#preview_engagement_modal', 1)">Cancel and Return</button>
+
+                <button type="button" class="btn btn-dark-green step step-1" data-step="1" onclick="sendEvent('#preview_engagement_modal', 2)" id="step_one_confirm">Confirm</button>
+                <button type="button" class="btn btn-dark-green step step-2" data-step="2" onclick="sendEvent('#preview_engagement_modal', 3)" id="step_two_confirm">Confirm</button>
+                <button type="button" class="btn btn-dark-green step step-3" data-step="3" onclick="sendEvent('#preview_engagement_modal', 4)" id="step_three_confirm">Confirm</button>
+
+                <button id="btn_begin_engagement" type="button" class="btn btn-dark-green step step-4" data-step="4" data-engagement="-1">Begin Engagement</button>
+            </div>
+        </div>
+    </div>
+</form>

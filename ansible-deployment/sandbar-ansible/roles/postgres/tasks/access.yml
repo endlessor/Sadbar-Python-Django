@@ -1,0 +1,7 @@
+---
+- name: postgres | Allow MD5 authentication
+  template: src=pg_hba.conf.j2 dest=/etc/postgresql/9.5/main/pg_hba.conf backup=yes
+    
+- name: postgres | restart postgresql
+  service: name=postgresql state=restarted enabled=yes
+  

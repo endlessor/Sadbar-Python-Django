@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load ordering %}
+{% load pathsafe %}
+
+{% block content %}
+
+<table border="0" cellspacing="0" cellpadding="0" class="table table-hover">
+    <thead>
+        <tr>
+            <th style='width: 50px'>ID</th>
+            <th>
+                State
+                {% if 'state' in sorting and '-state' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-state' %}"></a>
+                {% elif '-state' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'state' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'state' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Company
+                {% if 'company' in sorting and '-company' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-company' %}"></a>
+                {% elif '-company' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'company' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'company' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Domain
+                {% if 'domain' in sorting and '-domain' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-domain' %}"></a>
+                {% elif '-domain' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'domain' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'domain' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Company LinkedIn ID
+                {% if 'company_linkedin_id' in sorting and '-company_linkedin_id' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-company_linkedin_id' %}"></a>
+                {% elif '-company_linkedin_id' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'company_linkedin_id' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'company_linkedin_id' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Last Started
+                {% if 'last_started_at' in sorting and '-last_started_at' not in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet text-danger" href="{% order_filter sorting request '-last_started_at' %}"></a>
+                {% elif '-last_started_at' in sorting %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet-alt text-danger" href="{% order_filter sorting request 'last_started_at' %}"></a>
+                {% else %}
+                    <a class="glyphicon glyphicon-sort-by-alphabet" href="{% order_filter sorting request 'last_started_at' %}"></a>
+                {% endif %}
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody id="shoalscrape_tasks_list">
+    {% for shoalscrape_task in objects %}
+        <tr data-id="{{ shoalscrape_task.id }}">
+            <td> {{ shoalscrape_task.id }} </td>
+            <td>
+                <form id='shoalscrape_tasks_list_status_{{ shoalscrape_task.id }}' class='shoalscrape-tasks-list-status form-horizontal' style="display: table-cell; width: 1px; white-space: nowrap;" action="/shoalscrape-tasks/edit/{{ shoalscrape_task.id }}/" method='POST'>
+                    {% csrf_token %}
+                    <button data-shoalscrape-task="{{ shoalscrape_task.id }}" type="button" title="Toggle task" class="btn btn-xs shoalscrape-task-control glyphicon glyphicon-{% if shoalscrape_task.status.0 == 0 %}minus btn-light-blue{% elif shoalscrape_task.status.0 == 1 %}refresh btn-light-green{% elif shoalscrape_task.status.0 == 2 %}pause btn-grey{% elif shoalscrape_task.status.0 == 3 %}remove btn-red{% elif shoalscrape_task.status.0 == 4 %}ok btn-dark-green{% endif %}"></button>
+                        {% if shoalscrape_task.status.0 == 3 %}
+                            <span data-shoalscrape-task="{{ shoalscrape_task.id }}" class="shoalscrape-tasks-list-status-text shoalscrape-task-error-tag" title="{{ shoalscrape_task.status.1 }}">Error</span>
+                        {% else %}
+                            <span data-shoalscrape-task="{{ shoalscrape_task.id }}" class="shoalscrape-tasks-list-status-text">
+                                {% if shoalscrape_task.status.0 == 0 %}
+                                    Not Launched
+                                {% elif shoalscrape_task.status.0 == 1 %}
+                                    In Progress
+                                {% elif shoalscrape_task.status.0 == 2 %}
+                                    Paused
+                                {% elif shoalscrape_task.status.0 == 4 %}
+                                    Completed
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                </form>
+            </td>
+            <td> {{ shoalscrape_task.company }} </td>
+            <td> {{ shoalscrape_task.domain }} </td>
+            <td> {{ shoalscrape_task.company_linkedin_id }} </td>
+            <td> {{ shoalscrape_task.last_started_at }} </td>
+            <td style="width: 70px; text-align: center;">
+                <a class="glyphicon glyphicon-pencil" title="Edit" href="/shoalscrape-tasks/edit/{{ shoalscrape_task.id }}"></a>
+                <a class="glyphicon glyphicon-save-file" title="Download CSV" href="/assets/shoalscrape/{{ shoalscrape_task.id }}/{% make_pathsafe shoalscrape_task.company %}_master_list.csv" download></a>
+                <a class="glyphicon glyphicon-remove" title="Remove" onclick="removeEntity('shoalscrape-tasks', {{ shoalscrape_task.id }})"></a>
+            </td>
+        </tr>
+    {% endfor %}
+        <tr>
+            <td colspan="6">
+                <a title="Add ShoalScrape Task" href="/shoalscrape-tasks/add/">Add ShoalScrape Task</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{% comment %}
+{% with order_by="order_by="|add:sorting %}
+    {% with client="&client="|add:client %}
+    {% bootstrap_pagination page extra=order_by|add:client %}
+    {% endwith %}
+{% endwith %}
+{% endcomment %}
+
+{% endblock content %}

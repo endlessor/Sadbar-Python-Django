@@ -1,0 +1,14 @@
+---
+- name: Update Sandbar
+  hosts: local
+  become: true
+  become_user: root
+  vars_files:
+    - ./group_vars/config.yml
+    - ./group_vars/package-versions.yml
+
+  roles:
+    - backup
+    - hostname
+    - update
+ 

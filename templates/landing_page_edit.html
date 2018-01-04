@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block content %}
+{% if landingPage %}
+<form id='campaign_edit' class='{% ifequal apage 'landing_pages' %}landing{% else %}redirect{% endifequal %}_page_edit form-horizontal' action="/{% ifequal apage 'landing_pages' %}landing{% else %}redirect{% endifequal %}-pages/edit/{{ landingPage.id }}/" method='POST'>
+{% elif request.POST.landing_page_id %}
+<form id='campaign_edit' class='{% ifequal apage 'landing_pages' %}landing{% else %}redirect{% endifequal %}_page_edit form-horizontal' action="/{% ifequal apage 'landing_pages' %}landing{% else %}redirect{% endifequal %}-pages/edit/{{ request.POST.landing_page_id }}/" method='POST'>
+{% else %}
+    <form id='campaign_edit' class='{% ifequal apage 'landing_pages' %}landing{% else %}redirect{% endifequal %}_page_edit form-horizontal' action="/{% ifequal apage 'landing_pages' %}landing{% else %}redirect{% endifequal %}-pages/add/" method='POST'>
+{% endif %}
+    {% csrf_token %}
+
+        {% bootstrap_field form.landing_page_id layout='horizontal' %}
+        {% bootstrap_field form.is_redirect_page layout='horizontal' %}
+        {% bootstrap_field form.name layout='horizontal' %}
+        {% bootstrap_field form.description layout='horizontal' %}
+        {% bootstrap_field form.page_type layout='horizontal' %}
+        {% bootstrap_field form.url layout='horizontal' %}
+
+        <div class="form-group">
+            <div class="col-md-9 col-md-offset-3 help-block"><p>In order for landing pages to work properly, they must contain a &lt;form&gt; element with method=&quot;post&quot; and at mininum input fields with name=&quot;sb_login&quot; and name=&quot;sb_password&quot;</p></div>
+            <label class="col-md-3 control-label" for="template">Template</label>
+            <div class="col-md-9">
+                <div class="input-group">
+                    <textarea name="template" id="template">{{ source }}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-3 col-md-offset-3">
+                <a href="javascript:void(0)" class="btn btn-orange {% ifequal apage 'redirect_pages' %}hidden{% endifequal %}" id="check_landing_page_form" title="Check the HTML template for a valid landing page form">Check Form</a>
+                <a id="check_landing_page_form_icon" class="btn glyphicon glyphicon-remove" style="display: none;"></a>
+            </div>
+
+            <div class="submit_block">
+                <div class="col-md-12">
+                    <a href="/{% ifequal apage 'landing_pages' %}landing{% else %}redirect{% endifequal %}-pages/list" class="btn btn-default" id="back-to-list">Back To List</a>
+                    {% if landingPage or request.POST.landing_page_id %}
+                        <input type="button" class="btn btn-primary" id="refetch" value="Re-Fetch" />
+                    {% endif %}
+                    <input type="submit" class="btn btn-primary" id="sub" value="Save" />
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+        <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+        <script>
+        CKEDITOR.replace('template', {
+            customConfig: '/static/ckeditor/ck-settings.js'
+        });
+        var is_source = {% if source %}true{% else %}false{% endif %};
+        $('#template').parents('.form-group').hide();
+        $('#id_url').parents('.form-group').show();
+        $('#id_scraper_user_agent').parents('.form-group').show();
+        $('#refetch').hide();
+        if ($('#id_page_type').val() == 'page' && is_source == true ) {
+            $('#refetch').show()
+            $('#id_scraper_user_agent').parents('.form-group').show();
+            $('#id_url').parents('.form-group').show();
+            $('#template').parents('.form-group').show();
+        } else if ($('#id_page_type').val() == 'manual') {
+            $('#refetch').hide();
+            $('#id_scraper_user_agent').parents('.form-group').hide();
+            $('#id_url').parents('.form-group').hide();
+            $('#template').parents('.form-group').show();
+        }
+        </script>
+        <div class="clearer"></div>
+    </form>
+{% endblock %}
