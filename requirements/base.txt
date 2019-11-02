@@ -15,7 +15,7 @@ django-rest-swagger==2.0.6
 # The SchemaGenerator from DRF used by django-rest-swagger has a bug in 3.4.0
 # which is fixed in >=3.4.1. The schema page breaks if this order is reversed.
 dynamic-rest==1.5.0
-djangorestframework==3.4.6
+djangorestframework==3.9.1
 
 djangorestframework-jwt==1.8.0
 dnspython==1.14.0
