@@ -21,7 +21,7 @@ djangorestframework-jwt==1.8.0
 dnspython==1.14.0
 google-api-python-client==1.5.2
 kombu==3.0.33
-lxml==3.5.0
+lxml==4.6.2
 oauth2client==3.0.0
 psycopg2==2.6.1
 pycrypto==2.6.1
